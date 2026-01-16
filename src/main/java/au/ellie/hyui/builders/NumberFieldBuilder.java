@@ -31,7 +31,7 @@ public class NumberFieldBuilder extends UIElementBuilder<NumberFieldBuilder> {
     public static NumberFieldBuilder numberInput() {
         return new NumberFieldBuilder(Theme.GAME_THEME);
     }
-
+    
     public NumberFieldBuilder withValue(double value) {
         this.value = value;
         return this;
@@ -39,6 +39,11 @@ public class NumberFieldBuilder extends UIElementBuilder<NumberFieldBuilder> {
 
     public NumberFieldBuilder addEventListener(CustomUIEventBindingType type, Consumer<Double> callback) {
         return addEventListenerInternal(type, callback);
+    }
+
+    @Override
+    public boolean usesRefValue() {
+        return true;
     }
 
     @Override

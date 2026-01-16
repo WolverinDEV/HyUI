@@ -40,7 +40,7 @@ public class TextFieldBuilder extends UIElementBuilder<TextFieldBuilder> {
     public static TextFieldBuilder textInput() {
         return new TextFieldBuilder(Theme.GAME_THEME, UIElements.MACRO_TEXT_FIELD);
     }
-
+    
     public TextFieldBuilder withValue(String value) {
         this.value = value;
         return this;
@@ -48,6 +48,11 @@ public class TextFieldBuilder extends UIElementBuilder<TextFieldBuilder> {
 
     public TextFieldBuilder addEventListener(CustomUIEventBindingType type, Consumer<String> callback) {
         return addEventListenerInternal(type, callback);
+    }
+    
+    @Override
+    public boolean usesRefValue() {
+        return true;
     }
 
     @Override

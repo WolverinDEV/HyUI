@@ -27,7 +27,7 @@ public class CheckBoxBuilder extends UIElementBuilder<CheckBoxBuilder> {
         withWrappingGroup(true);
         withUiFile("Pages/Elements/CheckBox.ui");
     }
-
+    
     public CheckBoxBuilder withValue(boolean value) {
         this.value = value;
         return this;
@@ -40,6 +40,11 @@ public class CheckBoxBuilder extends UIElementBuilder<CheckBoxBuilder> {
 
     public CheckBoxBuilder addEventListener(CustomUIEventBindingType type, Consumer<Boolean> callback) {
         return addEventListenerInternal(type, callback);
+    }
+
+    @Override
+    public boolean usesRefValue() {
+        return true;
     }
 
     @Override

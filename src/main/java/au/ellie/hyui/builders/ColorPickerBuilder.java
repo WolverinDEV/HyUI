@@ -26,7 +26,7 @@ public class ColorPickerBuilder extends UIElementBuilder<ColorPickerBuilder> {
         withWrappingGroup(true);
         withUiFile("Pages/Elements/ColorPicker.ui");
     }
-
+    
     public ColorPickerBuilder withValue(String hexColor) {
         this.value = hexColor;
         return this;
@@ -34,6 +34,11 @@ public class ColorPickerBuilder extends UIElementBuilder<ColorPickerBuilder> {
 
     public ColorPickerBuilder addEventListener(CustomUIEventBindingType type, Consumer<String> callback) {
         return addEventListenerInternal(type, callback);
+    }
+
+    @Override
+    public boolean usesRefValue() {
+        return true;
     }
 
     @Override

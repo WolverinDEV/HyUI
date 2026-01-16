@@ -7,12 +7,12 @@ HyUI is a fluent, builder-based library for creating and managing custom user in
 To use HyUI in your Hytale project, you can either include the JAR file directly or use Cursemaven if you are using Gradle.
 
 **Using the JAR file:**
-1. Download the latest `HyUI-0.1.0.jar` from the releases page.
+1. Download the latest `HyUI-0.X.0.jar` (replace X with version) from the releases page.
 2. Place the JAR in your project's `libs` folder.
-3. Add the following to your `build.gradle`:
+3. Add the following to your `build.gradle` (replace X with version):
 ```gradle
 dependencies {
-    implementation files('libs/HyUI-0.1.0.jar')
+    implementation files('libs/HyUI-0.X.0.jar')
 }
 ```
 
@@ -36,9 +36,51 @@ dependencies {
 
 To start building a UI, use the `PageBuilder`. You can load a base `.ui` file and then add dynamic elements to it.
 
+##### What is a Placeholder UI file?
+A placeholder UI file (e.g., `Placeholder.ui`) is a base UI file that typically contains:
+1.  A **PageOverlay** component to ensure the UI behaves like a full page.
+2.  A **Container** (often named `#Content`) where HyUI will inject your dynamic elements.
+
+Example `Placeholder.ui` structure located in Common.UI.Custom.Pages:
+```ui
+$C = "../Common.ui";
+
+@CustomStyle = TextButtonStyle(
+              Default: (Background: $C.@DefaultSquareButtonDefaultBackground, LabelStyle: $C.@DefaultButtonLabelStyle),
+              Hovered: (Background: $C.@DefaultSquareButtonHoveredBackground, LabelStyle: $C.@DefaultButtonLabelStyle),
+              Pressed: (Background: $C.@DefaultSquareButtonPressedBackground, LabelStyle: $C.@DefaultButtonLabelStyle),
+              Disabled: (Background: $C.@DefaultSquareButtonDisabledBackground, LabelStyle: $C.@DefaultButtonDisabledLabelStyle),
+              Sounds: $C.@ButtonSounds,
+            );
+
+$C.@PageOverlay {
+  $C.@Container #HyUIContainer {
+    Anchor: (Width: 600, Height: 260);
+
+    #Title {
+      Group {
+        $C.@Title #HyUITitle {
+          @Text = "HyUI";
+        }
+      }
+    }
+
+    #Content {
+      LayoutMode: Left;
+    }
+  }
+}
+```
+
+##### Using Callbacks for Page Customization
+You can use `editElement` callbacks on the `PageBuilder` to modify properties of the base UI file, such as its title.
+
 ```java
 new PageBuilder(playerRef)
     .fromFile("Pages/MyBasePage.ui")
+    .editElement(commands -> {
+        commands.set("#Overlay.Title", "My Custom Title");
+    })
     .open(store);
 ```
 

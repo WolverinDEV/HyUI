@@ -262,9 +262,7 @@ public abstract class UIElementBuilder<T extends UIElementBuilder<T>> {
         }
     }
 
-    protected void onBuild(UICommandBuilder commands, UIEventBuilder events) {
-        // To be overridden by subclasses
-    }
+    protected abstract void onBuild(UICommandBuilder commands, UIEventBuilder events);
 
     protected void applyStyle(UICommandBuilder commands, String prefix, HyUIStyle style) {
         Set<String> unsupported = getUnsupportedStyleProperties();
@@ -330,6 +328,13 @@ public abstract class UIElementBuilder<T extends UIElementBuilder<T>> {
 
     public String getId() {
         return id;
+    }
+
+    /**
+     * @return true if the element uses the @Value (or data-type equiv.) (RefValue) property for its value in events.
+     */
+    public boolean usesRefValue() {
+        return false;
     }
 
     public List<UIEventListener<?>> getListeners() {

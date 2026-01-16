@@ -23,6 +23,18 @@ public class HyUIPage extends InteractiveCustomUIPage<DynamicPageData> {
     private final List<UIElementBuilder<?>> elements;
     private final List<Consumer<UICommandBuilder>> editCallbacks;
 
+    /**
+     * Creates a new HyUIPage.
+     *
+     * @param playerRef     The player this page is for.
+     * @param lifetime      The lifetime of the page.
+     * @param baseUiFile    The base UI file to use (e.g. "Pages/Placeholder.ui").
+     * @param elements      The elements to add to the page.
+     */
+    public HyUIPage(PlayerRef playerRef, CustomPageLifetime lifetime, String baseUiFile, List<UIElementBuilder<?>> elements) {
+        this(playerRef, lifetime, baseUiFile, elements, null);
+    }
+
     public HyUIPage(PlayerRef playerRef, CustomPageLifetime lifetime, String uiFile, List<UIElementBuilder<?>> elements, List<Consumer<UICommandBuilder>> editCallbacks) {
         super(playerRef, lifetime, DynamicPageData.CODEC);
         this.uiFile = uiFile;
@@ -30,6 +42,18 @@ public class HyUIPage extends InteractiveCustomUIPage<DynamicPageData> {
         this.editCallbacks = editCallbacks;
     }
 
+    /**
+     * NOTE: Do not call this method, Hytale will call this method for you.
+     * To open a UI see documentation.
+     * 
+     * Builds the HyUI page by appending the designated UI file and processing the 
+     * elements and callbacks associated with the page.
+     *
+     * @param ref             The reference to the entity store associated with the page.
+     * @param uiCommandBuilder The builder used to construct the UI commands for the page.
+     * @param uiEventBuilder   The builder used to construct the UI events for the page.
+     * @param store            The store containing the entity data required for the page.
+     */
     @Override
     public void build(@Nonnull Ref<EntityStore> ref, @Nonnull UICommandBuilder uiCommandBuilder, @Nonnull UIEventBuilder uiEventBuilder, @Nonnull Store<EntityStore> store) {
         HyUIPlugin.getInstance().logInfo("Building HyUIPage" + (uiFile != null ? " from file: " + uiFile : ""));
@@ -48,7 +72,6 @@ public class HyUIPage extends InteractiveCustomUIPage<DynamicPageData> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, @Nonnull DynamicPageData data) {
         super.handleDataEvent(ref, store, data);
@@ -79,8 +102,7 @@ public class HyUIPage extends InteractiveCustomUIPage<DynamicPageData> {
 
                     if (UIEventActions.VALUE_CHANGED.equals(data.action) && effectiveId.equals(target)) {
                         // If it's a value-changed action, use @Value (RefValue) for specific elements
-                        if (element instanceof TextFieldBuilder || element instanceof NumberFieldBuilder || 
-                            element instanceof CheckBoxBuilder || element instanceof ColorPickerBuilder) {
+                        if (element.usesRefValue()) {
                             finalValue = data.getValue("RefValue");
                         } else {
                             finalValue = data.getValue("Value");
