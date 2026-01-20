@@ -54,6 +54,29 @@ public interface TagHandler {
             Map<String, String> styles = parseStyleAttribute(element.attr("style"));
             applyStyles(builder, styles);
         }
+
+        if (element.tagName().equalsIgnoreCase("img")) {
+            HyUIAnchor anchor = builder.getAnchor();
+            if (anchor == null) {
+                anchor = new HyUIAnchor();
+            }
+            boolean hasImgAttr = false;
+            if (element.hasAttr("width")) {
+                try {
+                    anchor.setWidth(Integer.parseInt(element.attr("width")));
+                    hasImgAttr = true;
+                } catch (NumberFormatException ignored) {}
+            }
+            if (element.hasAttr("height")) {
+                try {
+                    anchor.setHeight(Integer.parseInt(element.attr("height")));
+                    hasImgAttr = true;
+                } catch (NumberFormatException ignored) {}
+            }
+            if (hasImgAttr) {
+                builder.withAnchor(anchor);
+            }
+        }
     }
 
     private Map<String, String> parseStyleAttribute(String styleAttr) {

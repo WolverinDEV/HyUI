@@ -1,9 +1,4 @@
-Group #HyUIAssetImageGroup {
-  // Thanks to artho @ Hytale Modding discord :3
-  Anchor: (Height: 300, Width: 300);
-  LayoutMode: Middle;
-  Padding: (Top: 16, Bottom: 16);
-  AssetImage #HyUIAssetImage {
+AssetImage #HyUIAssetImage {
+    // Thanks to artho @ Hytale Modding discord :3
     Anchor: (Width: 200, Height: 200);
-  }
 }

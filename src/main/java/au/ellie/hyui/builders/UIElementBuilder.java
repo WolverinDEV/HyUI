@@ -209,6 +209,10 @@ public abstract class UIElementBuilder<T extends UIElementBuilder<T>> {
         return (T) this;
     }
 
+    public HyUIAnchor getAnchor() {
+        return anchor;
+    }
+
     /**
      * Sets the padding for the UI element.
      *

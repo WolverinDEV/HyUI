@@ -1,14 +1,26 @@
 package au.ellie.hyui;
 
+import au.ellie.hyui.builders.HudBuilder;
+import au.ellie.hyui.builders.HyUIHud;
 import au.ellie.hyui.commands.HyUIAddHudCommand;
 import au.ellie.hyui.commands.HyUIRemHudCommand;
 import au.ellie.hyui.commands.HyUIUpdateHudCommand;
 import au.ellie.hyui.commands.HyUITestGuiCommand;
+import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
+import com.hypixel.hytale.server.core.universe.world.World;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.CompletableFuture;
+
+import static com.hypixel.hytale.server.core.command.commands.player.inventory.InventorySeeCommand.MESSAGE_COMMANDS_ERRORS_PLAYER_NOT_IN_WORLD;
 
 public class HyUIPlugin extends JavaPlugin {
 
@@ -34,6 +46,39 @@ public class HyUIPlugin extends JavaPlugin {
             this.getCommandRegistry().registerCommand(new HyUIAddHudCommand());
             this.getCommandRegistry().registerCommand(new HyUIRemHudCommand());
             this.getCommandRegistry().registerCommand(new HyUIUpdateHudCommand());
+            
+            this.getEventRegistry().registerGlobal(PlayerReadyEvent.class, event -> {
+                instance.logInfo("Player ready event triggered for " + event.getPlayer().getDisplayName());
+                
+                var player = event.getPlayer();
+                if (player == null) return;
+
+                Ref<EntityStore> ref = player.getReference();
+                if (ref == null || !ref.isValid()) return;
+                
+                Store<EntityStore> store = ref.getStore();
+                World world = store.getExternalData().getWorld();
+                world.execute(() -> {
+                    PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
+                    
+                    String html = """
+                        <div id="Test" style="anchor-width: 280; anchor-height: 240; anchor-right: 1; anchor-top: 150">
+                            <div style="background-color: #000000; layout-mode: top">
+                                <img src="lizard.png" width="100" height="60">
+                                <label id="Hello">Initial Text</label>
+                            </div>
+                        </div>
+                        """;
+
+                    HyUIHud hud = HudBuilder.detachedHud()
+                            .fromHtml(html)
+                            .withRefreshRate(1000)
+                            .onRefresh((h) -> {
+                            })
+                            .show(playerRef, store);
+                });
+
+            });
         }
         
     }

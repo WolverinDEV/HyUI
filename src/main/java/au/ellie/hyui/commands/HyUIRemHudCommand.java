@@ -27,7 +27,7 @@ public class HyUIRemHudCommand extends AbstractAsyncCommand {
             }
 
             HyUIHud lastHud = HyUIAddHudCommand.HUD_INSTANCES.remove(HyUIAddHudCommand.HUD_INSTANCES.size() - 1);
-            lastHud.removeFromMultiHud();
+            lastHud.remove();
             commandContext.sendMessage(Message.raw("Removed last HUD."));
         }
         return CompletableFuture.completedFuture(null);

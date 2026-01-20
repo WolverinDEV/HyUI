@@ -74,9 +74,18 @@ public class HyUIHud extends CustomUIHud implements UIContext {
      * 
      * You can later associate it with another, or the same multi-HUD and show it.
      */
-    public void removeFromMultiHud() {
+    public void remove() {
         if (parentMultiHud != null) {
             parentMultiHud.removeHud(this);
+        }
+    }
+
+    /**
+     * Re-adds the HUD to its parent multi-HUD if it was previously removed.
+     */
+    public void readd() {
+        if (parentMultiHud != null) {
+            parentMultiHud.showHud(this);
         }
     }
     

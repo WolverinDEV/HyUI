@@ -20,13 +20,14 @@ public class UIElements {
     public static final String MACRO_TEXT_FIELD = "TextField";
     public static final String MACRO_NUMBER_FIELD = "NumberField";
     public static final String BACK_BUTTON = "BackButton";
+    public static final String ASSET_IMAGE = "AssetImage";
 
     public static final Set<String> NORMAL_ELEMENTS = Set.of(
             GROUP, LABEL, COLOR_PICKER, BUTTON, TEXT_FIELD, "Input", "CheckBox", "Slider", "ItemSlot", "Text"
     );
 
     public static final Set<String> MACRO_ELEMENTS = Set.of(
-            PAGE_OVERLAY, CONTAINER, TEXT_BUTTON, CANCEL_TEXT_BUTTON, CHECK_BOX_WITH_LABEL, MACRO_TEXT_FIELD, MACRO_NUMBER_FIELD, BACK_BUTTON, "Title", SLIDER
+            PAGE_OVERLAY, CONTAINER, TEXT_BUTTON, CANCEL_TEXT_BUTTON, CHECK_BOX_WITH_LABEL, MACRO_TEXT_FIELD, MACRO_NUMBER_FIELD, BACK_BUTTON, ASSET_IMAGE, "Title", SLIDER
     );
 
     private UIElements() {}

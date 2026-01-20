@@ -1,111 +1,105 @@
-**HyUI** is a powerful, developer-friendly Java library designed to simplify the creation and management of custom User Interfaces for Hytale servers. **Now featuring HYUIML**, a declarative HTML/CSS-like syntax that allows you to build interfaces with familiar web-like markup. HyUI enables developers to construct complex, interactive, and high-performance UIs without the boilerplate of raw protocol handling by leveraging both this new markup and a fluent builder-based API.
+**HyUI** is a powerful, developer-friendly Java library designed to simplify the creation and management of custom User Interfaces for Hytale servers. By bridging Hytale's raw UI protocol with high-level abstractions, HyUI allows you to build complex, interactive, and high-performance UIs using either a fluent **Java Builder API** or **HYUIML**, a declarative HTML/CSS-like syntax.
 
-Whether you are building a simple admin panel or a full-scale RPG menu system, HyUI provides the "escape hatches" and high-level abstractions needed to get the job done efficiently.
+Whether you are building a simple admin panel, a persistent HUD, or a full-scale RPG menu system, HyUI provides the tools and "escape hatches" needed to get the job done efficiently.
 
 ***
 
 ### Features
 
-*   **Fluent Builder API:** Construct nested UI hierarchies (Groups, Buttons, Labels, etc.) using a clean, readable chain of methods.
-*   **Dynamic Element Injection:** Load base `.ui` files and inject dynamic elements into specific selectors at runtime using the `inside("#Selector")` system.
 *   **HYUIML (HTML/CSS):** Build interfaces using a familiar, declarative HTML-like syntax with CSS styling.
-*   **Event Handling Simplified:** Bind server-side logic directly to UI events (like `Activating` or `ValueChanged`) using simple lambda expressions.
-*   **Specialized Builders:** Includes ready-to-use builders for:
-    *   **Buttons:** Standardized game-themed text buttons.
-    *   **Input Fields:** Specialized builders for Text, Numbers, and Color Pickers.
-    *   **Containers:** Flexible Group builders with various layout modes.
-*   **Anchoring & Styling:** Robust support for `HyUIAnchor` for precise positioning and `HyUIStyle` for deep visual customization (colors, fonts, bold rendering, and disabled states).
-*   **Rich Tooltips:** Easily attach `Message` based tooltips to any UI element.
-*   **Multi-HUD Support:** Coexist with other mods using a smart HUD-chaining system that allows multiple HUD elements to be displayed simultaneously.
+*   **Fluent Builder API:** Construct nested UI hierarchies (Groups, Buttons, Labels, etc.) using a clean, readable chain of methods.
+*   **Multi-HUD System:** Coexist with other mods effortlessly. HyUI automatically manages Hytale's single HUD slot to allow multiple independent HUD elements to be displayed simultaneously.
+*   **Dynamic Element Injection:** Load base `.ui` files and inject dynamic elements into specific selectors at runtime.
+*   **Event Handling Simplified:** Bind server-side logic directly to UI events using simple lambda expressions and access UI state via `UIContext`.
 *   **Periodic UI Refresh:** Built-in support for batched, periodic HUD updates with low performance overhead.
-*   **Advanced Logic (Escape Hatches):** Access raw `UICommandBuilder` instance at any point in the build process via `editElement` for properties not natively covered by the API.
+*   **Specialized Builders:** Includes ready-to-use builders for:
+    *   **Buttons:** Standardized game-themed text buttons and back buttons.
+    *   **Input Fields:** Text, Numbers, Sliders, Checkboxes, and Color Pickers.
+    *   **Containers:** Flexible Group builders with various layout modes and window frames.
+    *   **Images:** Easy asset-backed images with support for Hytale's `@2x` resolution.
+*   **Advanced Logic (Escape Hatches):** Access raw `UICommandBuilder` instances at any point for properties not natively covered by the API.
 
 ***
 
 ### Quick Start
 
-#### 1\. Installation (Gradle)
+#### 1. Installation (Gradle)
 
-You can get started quickly by using the example project: [https://github.com/Elliesaur/Hytale-Example-UI-Project](https://github.com/Elliesaur/Hytale-Example-UI-Project)
+To use HyUI in your Hytale project, you can get started quickly by using the example project: [https://github.com/Elliesaur/Hytale-Example-UI-Project](https://github.com/Elliesaur/Hytale-Example-UI-Project)
 
 Otherwise, add HyUI to your project via Cursemaven:
 
-```
+```gradle
 repositories {
     maven { url "https://www.cursemaven.com" }
 }
 
 dependencies {
-    implementation "curse.maven:hyui-<project-id>:<file-id>"
+    // Project ID: 1431415
+    implementation "curse.maven:hyui-1431415:<file-id>"
 }
 ```
 
-#### 2\. Creating a Simple Page
+#### 2. Creating a Page with HYUIML (HTML)
 
-Instantiate a `PageBuilder` to open a custom interface for a player:
-
-```
-new PageBuilder(playerRef)
-    .fromFile("Pages/MyMenu.ui")
-    .addElement(new GroupBuilder()
-        .withId("MainContainer")
-        .inside("#Content")
-        .addChild(ButtonBuilder.textButton()
-            .withText("Click Me!")
-            .addEventListener(CustomUIEventBindingType.Activating, (ctx) -> {
-                playerRef.sendMessage(Message.raw("You clicked the button!"));
-            }))
-    )
-    .open(store);
-```
-
-#### 3\. Using HYUIML (HTML)
-
-For a more declarative approach, use the `fromHtml` method:
+For most use cases, HYUIML is the fastest way to build layouts:
 
 ```java
 String html = """
     <div class="page-overlay">
-        <div class="container" data-hyui-title="Settings">
-            <p>Welcome to the menu!</p>
-            <button id="myBtn">Click Me</button>
+        <div class="container" data-hyui-title="My Menu">
+            <div class="container-contents">
+                <p>Welcome to the menu!</p>
+                <button id="myBtn">Click Me</button>
+            </div>
         </div>
     </div>
     """;
 
-PageBuilder.detachedPage()
+PageBuilder.pageForPlayer(playerRef)
     .fromHtml(html)
     .addEventListener("myBtn", CustomUIEventBindingType.Activating, (ctx) -> {
         playerRef.sendMessage(Message.raw("Clicked!"));
     })
-    .open(playerRef, store);
+    .open(store);
+```
+
+#### 3. Creating a HUD
+
+HUDs are persistent on-screen elements:
+
+```java
+HudBuilder.hudForPlayer(playerRef)
+    .fromHtml("<div style='anchor-top: 10; anchor-left: 10;'><p>Health: 100</p></div>")
+    .show(store);
 ```
 
 ***
 
 ### Components
 
-| Builder            |Purpose                                                                        |
-| ------------------ |------------------------------------------------------------------------------ |
-| <code>PageBuilder</code> |The entry point for UI creation; manages file loading and opening for players. |
-| <code>HudBuilder</code> |The entry point for HUD creation; manages multi-HUD coexistence and periodic refreshes. |
-| <code>GroupBuilder</code> |A container used to organize and layout child elements.                        |
-| <code>ButtonBuilder</code> |For interactive buttons; supports <code>textButton()</code> for standard Hytale aesthetics. |
-| <code>LabelBuilder</code> |For displaying dynamic text with style and anchor support.                     |
-| <code>TextFieldBuilder</code> |Captures string input from the player.                                         |
-| <code>ColorPickerBuilder</code> |Provides a Hex color selection interface.                                      |
-| <code>SliderBuilder</code> |Provides support for number sliders.                                           |
+| Builder | Purpose |
+| --- | --- |
+| `PageBuilder` | Entry point for full-screen UIs; manages file loading and lifecycle. |
+| `HudBuilder` | Entry point for HUD creation; manages multi-HUD coexistence and refreshes. |
+| `GroupBuilder` | A container used to organize and layout child elements. |
+| `ContainerBuilder` | Provides the standard Hytale window frame. |
+| `ButtonBuilder` | For interactive buttons; supports standard Hytale aesthetics. |
+| `LabelBuilder` | For displaying dynamic text with style and anchor support. |
+| `ImageBuilder` | For displaying asset-backed images (`.png`). |
+| `TextFieldBuilder` | Captures string or numeric input from the player. |
+| `ColorPickerBuilder` | Provides a Hex color selection interface. |
+| `SliderBuilder` | Provides support for number sliders. |
 
 ***
 
 ### Documentation & Examples
 
-A full implementation example, including a complete command class using `AbstractAsyncCommand`, can be found within the project repository docs folder.
+Detailed documentation for installation, page building, HUD building, and HYUIML can be found in the `docs` folder.
 
-Click the Source button on this page to go there!
+Click the **Source** button on this page to view the full documentation and implementation examples!
 
 **Requirements:**
-
 *   Hytale Server added as a dependency
 *   Java 25 (or current Hytale-compatible version)
-*   jsoup is a dependency and included in the JAR under MIT license.
+*   jsoup (included in the JAR)

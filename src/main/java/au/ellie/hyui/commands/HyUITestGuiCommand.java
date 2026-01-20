@@ -110,6 +110,8 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
                         <input type="checkbox" checked="true"/>
                         <input type="color" value="#ff0000" 
                             style="anchor-width: 140; anchor-height: 120; anchor-left: 12"/>
+                        <img src="lizard.png" style="anchor-width: 100; anchor-height: 100;"/>
+                        <img src="lizard.png" width="100" height="50"/>
                         <button id="btn1">Click Me!</button>
                         <input type="reset" value="Cancel Operation" class="cancel-btn" style="font-size: 25px"/>
                     </div>
@@ -122,8 +124,8 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
         
         PageBuilder builder = PageBuilder.detachedPage()
                 .fromHtml(html)
-                .withLifetime(CustomPageLifetime.CanDismiss);
-                /*.addEventListener("btn1", CustomUIEventBindingType.Activating, (data, ctx) -> {
+                .withLifetime(CustomPageLifetime.CanDismiss)
+                .addEventListener("btn1", CustomUIEventBindingType.Activating, (data, ctx) -> {
                     playerRef.sendMessage(Message.raw("Button clicked via PageBuilder ID lookup!: " + 
                     ctx.getValue("myInput", String.class).orElse("N/A")));
                 })
@@ -136,7 +138,7 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
             input.addEventListener(CustomUIEventBindingType.ValueChanged, (val) -> {
                 playerRef.sendMessage(Message.raw("Input changed to: " + val));
             });
-        });*/
+        });
         builder.open(playerRef, store);
     }
 

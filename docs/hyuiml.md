@@ -7,8 +7,16 @@ HYUIML is an HTML-like markup language for defining Hytale UIs using a familiar 
 You can load HYUIML directly into a `PageBuilder`:
 
 ```java
-String html = "<div><p>Hello from HYUIML!</p></div>";
-new PageBuilder(playerRef)
+String html = """
+    <div class="page-overlay">
+        <div class="container" data-hyui-title="Hello">
+            <div class="container-contents">
+                <p>Hello from HYUIML!</p>
+            </div>
+        </div>
+    </div>
+    """;
+PageBuilder.pageForPlayer(playerRef)
     .fromHtml(html)
     .open(store);
 ```
@@ -27,6 +35,7 @@ new PageBuilder(playerRef)
 | `<input type="checkbox">` | `CheckBoxBuilder` | Toggle switches. |
 | `<input type="color">` | `ColorPickerBuilder` | Color selectors. |
 | `<input type="reset">` | `ButtonBuilder` | Specifically creates a `CancelTextButton`. |
+| `<img>` | `ImageBuilder` | Displays an image. Use `src` for the path. |
 
 #### Attributes
 
@@ -37,6 +46,7 @@ HYUIML supports several standard and custom attributes:
 *   `value`: Sets the initial value for input elements.
 *   `min`, `max`, `step`: Specific to sliders (`input type="range"`).
 *   `checked`: Specific to checkboxes (`true` or `false`).
+*   `width`, `height`: Specific to `<img>` tag, maps to `anchor-width` and `anchor-height`.
 *   `data-hyui-title`: Specific to containers/overlays to set the header title.
 *   `data-hyui-tooltiptext`: Adds a tooltip to the element.
 
@@ -72,6 +82,18 @@ You can include a `<style>` block at the beginning of your HYUIML:
 *   `display`: `none` or `block` (alternative to `visibility`, also translates to `withVisible(bool)`).
 *   `flex-weight`: Numeric weight for layout.
 *   `anchor-*`: Maps to Hytale anchors (e.g., `anchor-left`, `anchor-top`, `anchor-width`, `anchor-height`).
+*   `background-image`: URL to an image (e.g., `url('lizard.png')`).
+*   `background-color`: Hex color (e.g., `#ff0000`) or with opacity (e.g., `#ff0000(0.5)`).
+*   `border`: Standard Hytale border support.
+
+> **Note on Backgrounds**: Due to Hytale limitations, you currently cannot use `background-image`, `background-color`, and background opacity together in a single element's style. 
+
+#### Image Assets
+
+All image paths (in `src` for `<img>` or `url()` for `background-image`) are relative to your mod's `Common/UI/Custom` folder. 
+
+**Important**: Hytale requires image assets to have a name ending in `@2x.png` for high-resolution support. 
+For example, if you use `<img src="lizard.png"/>`, you must have a file named `lizard@2x.png` located in `src/main/resources/Common/UI/Custom/lizard@2x.png`.
 
 #### Special Layout Classes
 
