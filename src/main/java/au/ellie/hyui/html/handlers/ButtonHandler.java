@@ -2,6 +2,7 @@ package au.ellie.hyui.html.handlers;
 
 import au.ellie.hyui.HyUIPlugin;
 import au.ellie.hyui.builders.ButtonBuilder;
+import au.ellie.hyui.builders.LabelBuilder;
 import au.ellie.hyui.builders.UIElementBuilder;
 import au.ellie.hyui.html.HtmlParser;
 import au.ellie.hyui.html.TagHandler;
@@ -24,23 +25,39 @@ public class ButtonHandler implements TagHandler {
         String tag = element.tagName().toLowerCase();
         ButtonBuilder builder;
 
+        boolean hasItemIcon = element.select("> span.item-icon").size() > 0;
+        boolean isRaw = hasItemIcon;
+
         if (tag.equals("input") && element.attr("type").equalsIgnoreCase("reset")) {
             builder = ButtonBuilder.cancelTextButton();
         } else if (tag.equals("button") && element.hasClass("back-button")) {
             builder = ButtonBuilder.backButton();
+        } else if (hasItemIcon) {
+            builder = ButtonBuilder.rawButton();
         } else {
             builder = ButtonBuilder.textButton();
         }
 
-        String text = element.text();
-        if (tag.equals("input") && element.hasAttr("value")) {
-            text = element.attr("value");
+        // Parse children
+        java.util.List<UIElementBuilder<?>> children = parser.parseChildren(element);
+        if (!children.isEmpty()) {
+            for (UIElementBuilder<?> child : children) {
+                if (!isRaw && child instanceof LabelBuilder label) {
+                    builder.withText(label.getText());
+                } else {
+                    builder.addChild(child);
+                }
+            }
+        } else {
+            String text = element.text();
+            if (tag.equals("input") && element.hasAttr("value")) {
+                text = element.attr("value");
+            }
+            
+            if (!text.isEmpty()) {
+                builder.withText(text);
+            }
         }
-        
-        if (!text.isEmpty()) {
-            builder.withText(text);
-        }
-
         applyCommonAttributes(builder, element);
 
         return builder;

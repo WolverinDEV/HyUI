@@ -2,6 +2,7 @@ package au.ellie.hyui.html;
 
 import au.ellie.hyui.builders.*;
 import au.ellie.hyui.elements.BackgroundSupported;
+import au.ellie.hyui.elements.LayoutModeSupported;
 import com.hypixel.hytale.server.core.Message;
 import org.jsoup.nodes.Element;
 
@@ -127,9 +128,8 @@ public interface TagHandler {
                 case "text-align":
                 case "layout-mode":
                 case "layout":
-                    // This maps to LayoutMode in some builders
-                    if (builder instanceof au.ellie.hyui.builders.GroupBuilder) {
-                        ((au.ellie.hyui.builders.GroupBuilder) builder).withLayoutMode(capitalize(value));
+                    if (builder instanceof LayoutModeSupported) {
+                        ((LayoutModeSupported<?>) builder).withLayoutMode(capitalize(value));
                     }
                     break;
                 case "vertical-align":

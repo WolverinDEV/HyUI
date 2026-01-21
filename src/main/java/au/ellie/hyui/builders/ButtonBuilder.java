@@ -1,6 +1,8 @@
 package au.ellie.hyui.builders;
 
 import au.ellie.hyui.HyUIPlugin;
+import au.ellie.hyui.elements.BackgroundSupported;
+import au.ellie.hyui.elements.LayoutModeSupported;
 import au.ellie.hyui.events.UIEventActions;
 import au.ellie.hyui.elements.UIElements;
 import au.ellie.hyui.events.UIContext;
@@ -19,8 +21,10 @@ import java.util.function.Consumer;
  * Builder for creating button UI elements. 
  * Buttons are interactive elements that can trigger actions when clicked.
  */
-public class ButtonBuilder extends UIElementBuilder<ButtonBuilder> {
+public class ButtonBuilder extends UIElementBuilder<ButtonBuilder> implements LayoutModeSupported<ButtonBuilder>, BackgroundSupported<ButtonBuilder> {
     private String text;
+    private String layoutMode;
+    private HyUIPatchStyle background;
 
     /**
      * You do not need to call this.
@@ -38,6 +42,8 @@ public class ButtonBuilder extends UIElementBuilder<ButtonBuilder> {
         withWrappingGroup(true);
         if (theme == Theme.GAME_THEME) {
             withUiFile("Pages/Elements/TextButton.ui");
+        } else if (theme == Theme.RAW) {
+            withUiFile("Pages/Elements/Button.ui");
         }
     }
 
@@ -56,6 +62,8 @@ public class ButtonBuilder extends UIElementBuilder<ButtonBuilder> {
             withUiFile("Pages/Elements/CancelTextButton.ui");
         } else if (UIElements.BACK_BUTTON.equals(elementPath)) {
             withUiFile("Pages/Elements/BackButton.ui");
+        } else if (UIElements.BUTTON.equals(elementPath)) {
+            withUiFile("Pages/Elements/Button.ui");
         }
     }
 
@@ -88,6 +96,10 @@ public class ButtonBuilder extends UIElementBuilder<ButtonBuilder> {
         return new ButtonBuilder(Theme.GAME_THEME, UIElements.BACK_BUTTON);
     }
 
+    public static ButtonBuilder rawButton() {
+        return new ButtonBuilder(Theme.GAME_THEME, UIElements.BUTTON);
+    }
+    
     /**
      * Sets the text for the button being built. Replaces any other text.
      *
@@ -100,6 +112,38 @@ public class ButtonBuilder extends UIElementBuilder<ButtonBuilder> {
             return this;
         this.text = text;
         return this;
+    }
+
+    /**
+     * Adds an item icon to the button.
+     *
+     * @param itemIcon the ItemIconBuilder to add.
+     * @return the current instance of ButtonBuilder for method chaining.
+     */
+    public ButtonBuilder withItemIcon(ItemIconBuilder itemIcon) {
+        return addChild(itemIcon);
+    }
+
+    @Override
+    public ButtonBuilder withLayoutMode(String layoutMode) {
+        this.layoutMode = layoutMode;
+        return this;
+    }
+
+    @Override
+    public String getLayoutMode() {
+        return this.layoutMode;
+    }
+
+    @Override
+    public ButtonBuilder withBackground(HyUIPatchStyle background) {
+        this.background = background;
+        return this;
+    }
+
+    @Override
+    public HyUIPatchStyle getBackground() {
+        return this.background;
     }
 
     /**
@@ -142,6 +186,9 @@ public class ButtonBuilder extends UIElementBuilder<ButtonBuilder> {
     protected void onBuild(UICommandBuilder commands, UIEventBuilder events) {
         String selector = getSelector();
         if (selector == null) return;
+
+        applyLayoutMode(commands, selector);
+        applyBackground(commands, selector);
 
         if (text != null) {
             HyUIPlugin.getLog().logInfo("Setting Text: " + text + " for " + selector);

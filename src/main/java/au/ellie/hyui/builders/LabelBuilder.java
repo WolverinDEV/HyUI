@@ -52,6 +52,10 @@ public class LabelBuilder extends UIElementBuilder<LabelBuilder> implements Back
         return this;
     }
 
+    public String getText() {
+        return text;
+    }
+
     @Override
     public LabelBuilder withBackground(HyUIPatchStyle background) {
         this.background = background;

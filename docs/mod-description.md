@@ -16,6 +16,7 @@ Whether you are building a simple admin panel, a persistent HUD, or a full-scale
     *   **Buttons:** Standardized game-themed text buttons and back buttons.
     *   **Input Fields:** Text, Numbers, Sliders, Checkboxes, and Color Pickers.
     *   **Progress Bars:** Dynamic progress indicators with customizable textures and effects.
+    *   **Item Icons:** Display item icons with asset-backed textures.
     *   **Containers:** Flexible Group builders with various layout modes and window frames.
     *   **Images:** Easy asset-backed images with support for Hytale's `@2x` resolution.
 *   **Advanced Logic (Escape Hatches):** Access raw `UICommandBuilder` instances at any point for properties not natively covered by the API.
@@ -92,6 +93,7 @@ HudBuilder.hudForPlayer(playerRef)
 | <code>ColorPickerBuilder</code> |Provides a Hex color selection interface.                                  |
 | <code>SliderBuilder</code> |Provides support for number sliders.                                       |
 | <code>ProgressBarBuilder</code> |Provides support for progress bars.                                       |
+| <code>ItemIconBuilder</code> |Provides support for item icons.                                          |
 
 ***
 

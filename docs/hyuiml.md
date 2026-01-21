@@ -23,20 +23,21 @@ PageBuilder.pageForPlayer(playerRef)
 
 #### Supported Tags and Mappings
 
-| HTML Tag | HyUI Builder | Notes |
-| --- | --- | --- |
-| `<div>` | `GroupBuilder` | Use for layout and containers. |
-| `<p>` | `LabelBuilder` | Standard text labels. |
-| `<label>` | `LabelBuilder` | Similar to `<p>`, often used for form field descriptions. |
-| `<button>` | `ButtonBuilder` | Standard buttons. Use `class="back-button"` for a back button. |
-| `<input type="text">` | `TextFieldBuilder` | Text input fields. |
-| `<input type="number">` | `NumberFieldBuilder` | Numeric input fields. |
-| `<input type="range">` | `SliderBuilder` | Sliders. |
-| `<input type="checkbox">` | `CheckBoxBuilder` | Toggle switches. |
-| `<input type="color">` | `ColorPickerBuilder` | Color selectors. |
-| `<input type="reset">` | `ButtonBuilder` | Specifically creates a `CancelTextButton`. |
-| `<progress>` | `ProgressBarBuilder` | Displays a progress bar. |
-| `<img>` | `ImageBuilder` | Displays an image. Use `src` for the path. |
+| HTML Tag                  | HyUI Builder | Notes                                                             |
+|---------------------------| --- |-------------------------------------------------------------------|
+| `<div>`                   | `GroupBuilder` | Use for layout and containers.                                    |
+| `<p>`                     | `LabelBuilder` | Standard text labels.                                             |
+| `<label>`                 | `LabelBuilder` | Similar to `<p>`, often used for form field descriptions.         |
+| `<button>`                | `ButtonBuilder` | Standard buttons. Use `class="back-button"` for a back button.    |
+| `<input type="text">`     | `TextFieldBuilder` | Text input fields.                                                |
+| `<input type="number">`   | `NumberFieldBuilder` | Numeric input fields.                                             |
+| `<input type="range">`    | `SliderBuilder` | Sliders.                                                          |
+| `<input type="checkbox">` | `CheckBoxBuilder` | Toggle switches.                                                  |
+| `<input type="color">`    | `ColorPickerBuilder` | Color selectors.                                                  |
+| `<input type="reset">`    | `ButtonBuilder` | Specifically creates a `CancelTextButton`.                        |
+| `<progress>`              | `ProgressBarBuilder` | Displays a progress bar.                                          |
+| `<span class="item-icon">` | `ItemIconBuilder` | Displays an item icon. Use `data-hyui-item-id` for the item icon. |
+| `<img>`                   | `ImageBuilder` | Displays an image. Use `src` for the path.                        |
 
 #### Attributes
 
@@ -50,6 +51,7 @@ HYUIML supports several standard and custom attributes:
 *   `width`, `height`: Specific to `<img>` tag, maps to `anchor-width` and `anchor-height`.
 *   `data-hyui-title`: Specific to containers/overlays to set the header title.
 *   `data-hyui-tooltiptext`: Adds a tooltip to the element.
+*   `data-hyui-item-id`: In-game item ID for the icon to reflect.
 *   `data-hyui-bar-texture-path`: Path to the progress bar's fill texture.
 *   `data-hyui-effect-texture-path`: Path to the progress bar's effect texture.
 *   `data-hyui-effect-width`, `data-hyui-effect-height`, `data-hyui-effect-offset`: Customizes the progress bar's effect appearance.

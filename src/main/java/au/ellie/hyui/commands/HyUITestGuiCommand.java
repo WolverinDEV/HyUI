@@ -116,34 +116,104 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
                             data-hyui-effect-width="500" 
                             data-hyui-effect-height="50" 
                             data-hyui-effect-offset="0"></progress>
+                        <span class="item-icon" data-hyui-item-id="Tool_Pickaxe_Crude" style="anchor-width: 64; anchor-height: 64;"></span>
                         <button id="btn1">Click Me!</button>
+                        <button id="btn2"><span class="item-icon" data-hyui-item-id="Tool_Pickaxe_Crude" style="anchor-width: 64; anchor-height: 64;"></span></button>
                         <input type="reset" value="Cancel Operation" class="cancel-btn" style="font-size: 25px"/>
                     </div>
                 </div>
             </div>
             """;
+        html = """
+                <style>
+                             #Button {
+                                 layout-mode: Left;
+                                 padding: 6;
+                             }
+            
+                             #Button:hover {
+                                 background-color: #000000(0.2);
+                             }
+            
+                             #Icon {
+                                 anchor-width: 32;
+                                 anchor-height: 32;
+                             }
+            
+                             #Name {
+                                 padding-left: 10;
+                                 padding-right: 10;
+                                 padding-top: 5;
+                                 padding-bottom: 5;
+                                 font-weight: bold;
+                                 flex-weight: 1;
+                             }
+            
+                             #Durability {
+                                 padding-left: 10;
+                                 padding-right: 10;
+                                 padding-top: 5;
+                                 padding-bottom: 5;
+                                 color: #ffffff;
+                             }
+            
+                             .separator {
+                                 layout-mode: Full;
+                                 anchor-height: 2;
+                                 background-color: #ffffff(0.6);
+                             }
+                            .container {
+                                layout-mode: top;
+                                anchor-left: 100;
+                                anchor-right: 100; 
+                                anchor-top: 50; 
+                                anchor-bottom: 50; 
+                            }
+                             
+                         </style>
+                        <div class="page-overlay" style="anchor: 150">
+                        <div class="container">
+                         <div class="container-contents">
+                         <div>
+                             <button id="Button">
+                                 <span id="Icon" class="item-icon" src="Tool_Pickaxe_Crude"></span>
+                                 <p id="Name">Item Name</p>
+                                 <p id="Durability">100/100</p>
+                                 <div class="separator"></div>
+                             </button>
+                         </div>
+                         </div>
+                        </div>
+                        
+                         </div>
+                """;
+        // TODO: 
+        // -- Support opacity on text color. 
+        // -- Support :hover sub-style (Just Style: (Hovered: ...)).
+        
+        
         //HyUIHud hudInstance = HudBuilder.detachedHud()
         //        .fromHtml(html)
         //        .show(playerRef, store);
         
         PageBuilder builder = PageBuilder.detachedPage()
                 .fromHtml(html)
-                .withLifetime(CustomPageLifetime.CanDismiss)
-                .addEventListener("btn1", CustomUIEventBindingType.Activating, (data, ctx) -> {
+                .withLifetime(CustomPageLifetime.CanDismiss);
+                /*.addEventListener("btn1", CustomUIEventBindingType.Activating, (data, ctx) -> {
                     playerRef.sendMessage(Message.raw("Button clicked via PageBuilder ID lookup!: " + 
                     ctx.getValue("myInput", String.class).orElse("N/A")));
                     ctx.getPage().ifPresent(HyUIPage::close);
                 })
                 .addEventListener("myInput", CustomUIEventBindingType.ValueChanged, String.class, (val) -> {
                     playerRef.sendMessage(Message.raw("Input changed to: " + val));
-                });
+                });*/
         
         // Or ... if you don't like building in method chains or want something custom...
-        builder.getById("myInput", TextFieldBuilder.class).ifPresent(input -> {
+        /*builder.getById("myInput", TextFieldBuilder.class).ifPresent(input -> {
             input.addEventListener(CustomUIEventBindingType.ValueChanged, (val) -> {
                 playerRef.sendMessage(Message.raw("Input changed to: " + val));
             });
-        });
+        });*/
         builder.open(playerRef, store);
     }
 
@@ -257,6 +327,9 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
                                 .withValue(0.45f)
                                 .withOuterAnchor(new HyUIAnchor().setWidth(200).setHeight(12))
                         )
+                        .addChild(ButtonBuilder.textButton()
+                                .withText("Button with Icon")
+                                .withItemIcon(ItemIconBuilder.itemIcon().withItemId("Items/IronSword.png")))
                         .addChild(ContainerBuilder.container()
                                 .withId("MyContainer")
                                 .withTitleText("Custom Title")

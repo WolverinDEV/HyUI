@@ -29,6 +29,7 @@ public class HtmlParser {
         registerHandler(new ButtonHandler());
         registerHandler(new ImgHandler());
         registerHandler(new ProgressBarHandler());
+        registerHandler(new ItemIconHandler());
     }
 
     /**
