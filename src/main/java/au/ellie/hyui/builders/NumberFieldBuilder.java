@@ -146,12 +146,16 @@ public class NumberFieldBuilder extends UIElementBuilder<NumberFieldBuilder> {
             commands.set(selector + ".Value", value);
         }
 
-        if (format != null) {
-            commands.set(selector + ".Format", format);
-        }
-
-        if (maxDecimalPlaces != null) {
-            commands.set(selector + ".MaxDecimalPlaces", maxDecimalPlaces);
+        // Build Format string - MaxDecimalPlaces goes inside Format, not as separate property
+        // Hytale syntax: Format: (MaxDecimalPlaces:2,Step:0.5)
+        if (format != null || maxDecimalPlaces != null) {
+            String formatValue = format;
+            if (formatValue == null && maxDecimalPlaces != null) {
+                formatValue = "(MaxDecimalPlaces:" + maxDecimalPlaces + ")";
+            }
+            if (formatValue != null) {
+                commands.set(selector + ".Format", formatValue);
+            }
         }
 
         if (hyUIStyle == null && style != null) {
