@@ -31,9 +31,10 @@ public class UIElements {
     public static final String RAW_BUTTON = "Button";
     public static final String ASSET_IMAGE = "AssetImage";
     public static final String ITEM_ICON_MACRO = "ItemIcon";
-
+    public static final String TIMER_LABEL = "TimerLabel";
+    public static final String TAB_NAVIGATION = "TabNavigation";
     public static final Set<String> NORMAL_ELEMENTS = Set.of(
-            GROUP, LABEL, COLOR_PICKER, BUTTON, TEXT_FIELD, "Input", "CheckBox", "Slider", ITEM_SLOT, "Text", PROGRESS_BAR, ITEM_ICON, SPRITE, ITEM_GRID
+            GROUP, LABEL, COLOR_PICKER, BUTTON, TEXT_FIELD, "Input", "CheckBox", "Slider", ITEM_SLOT, "Text", PROGRESS_BAR, ITEM_ICON, SPRITE, ITEM_GRID, TIMER_LABEL, TAB_NAVIGATION
     );
 
     public static final Set<String> MACRO_ELEMENTS = Set.of(
