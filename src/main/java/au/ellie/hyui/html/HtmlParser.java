@@ -25,6 +25,7 @@ public class HtmlParser {
     public HtmlParser() {
         // Register default handlers
         registerHandler(new ItemGridHandler());
+        registerHandler(new TabContentHandler());
         registerHandler(new DivHandler());
         registerHandler(new LabelHandler());
         registerHandler(new InputHandler());

@@ -118,87 +118,93 @@ public class HyUIShowcaseCommand extends AbstractAsyncCommand {
                 </div>
 
                 <!-- Tab Navigation -->
-                <nav class="tabs" data-tabs="templates:Templates,timers:Timers,components:Components" data-selected="templates" style="anchor-height: 50;">
+                <nav class="tabs" data-tabs="templates:Templates:templates-content,timers:Timers:timers-content,components:Components:components-content" data-selected="templates" style="anchor-height: 50;">
                 </nav>
 
                 <!-- Content Area -->
                 <div style="flex-weight: 1; padding: 15; background-color: #16213e(0.5); flex-direction: column;">
 
-                    <!-- Section 1: Template Variables -->
-                    <p style="color: #4CAF50; font-size: 16; font-weight: bold; anchor-height: 30;">1. Template Variables</p>
-                    <div style="flex-direction: row; anchor-height: 100;">
-                        <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
-                            <p style="color: #ffffff; font-size: 12;">Player: {{$playerName}}</p>
-                            <p style="color: #ffffff; font-size: 12;">Level: {{$playerLevel}}</p>
-                            <p style="color: #ffffff; font-size: 12;">Gold: {{$playerGold|number}}</p>
-                        </div>
-                        <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
-                            <p style="color: #ffffff; font-size: 12;">Upper: {{$playerName|upper}}</p>
-                            <p style="color: #ffffff; font-size: 12;">Lower: {{$playerName|lower}}</p>
-                            <p style="color: #ffffff; font-size: 12;">Default: {{$missing|Not Set}}</p>
-                        </div>
-                    </div>
-
-                    <!-- Section 2: Timers -->
-                    <p style="color: #4CAF50; font-size: 16; font-weight: bold; anchor-height: 30;">2. Timer Formats</p>
-                    <div style="flex-direction: row; anchor-height: 80;">
-                        <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
-                            <p style="color: #888888; font-size: 11;">MM:SS</p>
-                            <timer style="color: #00BCD4; font-size: 18;" value="185000" format="ms"></timer>
-                        </div>
-                        <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
-                            <p style="color: #888888; font-size: 11;">HH:MM:SS</p>
-                            <timer style="color: #00BCD4; font-size: 18;" value="7325000" format="hms"></timer>
-                        </div>
-                        <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
-                            <p style="color: #888888; font-size: 11;">Human</p>
-                            <timer style="color: #00BCD4; font-size: 18;" value="7325000" format="human"></timer>
-                        </div>
-                        <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
-                            <p style="color: #888888; font-size: 11;">Prefix/Suffix</p>
-                            <timer style="color: #00BCD4; font-size: 18;" value="300000" format="ms" prefix="Time: " suffix=" left"></timer>
+                    <div id="templates-content" class="tab-content" data-hyui-tab-id="templates" style="flex-direction: column;">
+                        <!-- Section 1: Template Variables -->
+                        <p style="color: #4CAF50; font-size: 16; font-weight: bold; anchor-height: 30;">1. Template Variables</p>
+                        <div style="flex-direction: row; anchor-height: 100;">
+                            <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
+                                <p style="color: #ffffff; font-size: 12;">Player: {{$playerName}}</p>
+                                <p style="color: #ffffff; font-size: 12;">Level: {{$playerLevel}}</p>
+                                <p style="color: #ffffff; font-size: 12;">Gold: {{$playerGold|number}}</p>
+                            </div>
+                            <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
+                                <p style="color: #ffffff; font-size: 12;">Upper: {{$playerName|upper}}</p>
+                                <p style="color: #ffffff; font-size: 12;">Lower: {{$playerName|lower}}</p>
+                                <p style="color: #ffffff; font-size: 12;">Default: {{$missing|Not Set}}</p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Section 3: Components -->
-                    <p style="color: #4CAF50; font-size: 16; font-weight: bold; anchor-height: 30;">3. Reusable Components</p>
-                    <div style="flex-direction: row; anchor-height: 70;">
-                        {{@statCard:label=Blocks Placed,value=12.847}}
-                        {{@statCard:label=Creatures Found,value=23}}
-                        {{@statCard:label=Recipes Learned,value=156}}
-                        {{@statCard:label=Zones Explored,value=4/6}}
-                    </div>
-
-                    <!-- Section 4: Features -->
-                    <p style="color: #4CAF50; font-size: 16; font-weight: bold; anchor-height: 30;">4. New in HyUI 0.5.0</p>
-                    <div style="flex-direction: column; anchor-height: 130;">
-                        {{@featureItem:text=TemplateProcessor for variable interpolation}}
-                        {{@featureItem:text=Built-in filters (upper/lower/number/percent)}}
-                        {{@featureItem:text=Reusable components with parameters}}
-                        {{@featureItem:text=TimerLabelBuilder with multiple formats}}
-                    </div>
-
-                    <!-- Section 5: Input Elements -->
-                    <p style="color: #4CAF50; font-size: 16; font-weight: bold; anchor-height: 30;">5. Input Elements</p>
-                    <div style="flex-direction: row; anchor-height: 150; gap: 10;">
-                        <div style="background-color: #2a2a3e; padding: 15; anchor-width: 200; flex-direction: column; align-items: center;">
-                            <p style="color: #888888; font-size: 11; anchor-height: 20;">Color Picker</p>
-                            <input type="color" id="demo-color" value="#4CAF50" style="anchor-width: 170; anchor-height: 110;" />
-                        </div>
-                        <div style="background-color: #2a2a3e; padding: 15; flex-weight: 2; flex-direction: column;">
-                            <p style="color: #888888; font-size: 11; anchor-height: 20;">Volume Slider</p>
-                            <input type="range" id="demo-slider" min="0" max="100" value="75" style="anchor-height: 30;" />
-                        </div>
-                        <div style="background-color: #2a2a3e; padding: 15; flex-weight: 1; flex-direction: column; align-items: center;">
-                            <p style="color: #888888; font-size: 11; anchor-height: 20;">Checkbox</p>
-                            <input type="checkbox" id="demo-checkbox" checked style="anchor-height: 30;" />
+                    <div id="timers-content" class="tab-content" data-hyui-tab-id="timers" style="flex-direction: column;">
+                        <!-- Section 2: Timers -->
+                        <p style="color: #4CAF50; font-size: 16; font-weight: bold; anchor-height: 30;">2. Timer Formats</p>
+                        <div style="flex-direction: row; anchor-height: 80;">
+                            <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
+                                <p style="color: #888888; font-size: 11;">MM:SS</p>
+                                <timer style="color: #00BCD4; font-size: 18;" value="185000" format="ms"></timer>
+                            </div>
+                            <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
+                                <p style="color: #888888; font-size: 11;">HH:MM:SS</p>
+                                <timer style="color: #00BCD4; font-size: 18;" value="7325000" format="hms"></timer>
+                            </div>
+                            <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
+                                <p style="color: #888888; font-size: 11;">Human</p>
+                                <timer style="color: #00BCD4; font-size: 18;" value="7325000" format="human"></timer>
+                            </div>
+                            <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
+                                <p style="color: #888888; font-size: 11;">Prefix/Suffix</p>
+                                <timer style="color: #00BCD4; font-size: 18;" value="300000" format="ms" prefix="Time: " suffix=" left"></timer>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Interactive Demo -->
-                    <div style="flex-direction: row; anchor-height: 60;">
-                        <button id="demo-button" style="flex-weight: 1;">Click Me!</button>
-                        <p style="color: #888888; flex-weight: 2; padding: 15;">Click to test event handling</p>
+                    <div id="components-content" class="tab-content" data-hyui-tab-id="components" style="flex-direction: column;">
+                        <!-- Section 3: Components -->
+                        <p style="color: #4CAF50; font-size: 16; font-weight: bold; anchor-height: 30;">3. Reusable Components</p>
+                        <div style="flex-direction: row; anchor-height: 70;">
+                            {{@statCard:label=Blocks Placed,value=12.847}}
+                            {{@statCard:label=Creatures Found,value=23}}
+                            {{@statCard:label=Recipes Learned,value=156}}
+                            {{@statCard:label=Zones Explored,value=4/6}}
+                        </div>
+
+                        <!-- Section 4: Features -->
+                        <p style="color: #4CAF50; font-size: 16; font-weight: bold; anchor-height: 30;">4. New in HyUI 0.5.0</p>
+                        <div style="flex-direction: column; anchor-height: 130;">
+                            {{@featureItem:text=TemplateProcessor for variable interpolation}}
+                            {{@featureItem:text=Built-in filters (upper/lower/number/percent)}}
+                            {{@featureItem:text=Reusable components with parameters}}
+                            {{@featureItem:text=TimerLabelBuilder with multiple formats}}
+                        </div>
+
+                        <!-- Section 5: Input Elements -->
+                        <p style="color: #4CAF50; font-size: 16; font-weight: bold; anchor-height: 30;">5. Input Elements</p>
+                        <div style="flex-direction: row; anchor-height: 150; gap: 10;">
+                            <div style="background-color: #2a2a3e; padding: 15; anchor-width: 200; flex-direction: column; align-items: center;">
+                                <p style="color: #888888; font-size: 11; anchor-height: 20;">Color Picker</p>
+                                <input type="color" id="demo-color" value="#4CAF50" style="anchor-width: 170; anchor-height: 110;" />
+                            </div>
+                            <div style="background-color: #2a2a3e; padding: 15; flex-weight: 2; flex-direction: column;">
+                                <p style="color: #888888; font-size: 11; anchor-height: 20;">Volume Slider</p>
+                                <input type="range" id="demo-slider" min="0" max="100" value="75" style="anchor-height: 30;" />
+                            </div>
+                            <div style="background-color: #2a2a3e; padding: 15; flex-weight: 1; flex-direction: column; align-items: center;">
+                                <p style="color: #888888; font-size: 11; anchor-height: 20;">Checkbox</p>
+                                <input type="checkbox" id="demo-checkbox" checked style="anchor-height: 30;" />
+                            </div>
+                        </div>
+
+                        <!-- Interactive Demo -->
+                        <div style="flex-direction: row; anchor-height: 60;">
+                            <button id="demo-button" style="flex-weight: 1;">Click Me!</button>
+                            <p style="color: #888888; flex-weight: 2; padding: 15;">Click to test event handling</p>
+                        </div>
                     </div>
                 </div>
 

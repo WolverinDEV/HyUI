@@ -82,6 +82,69 @@ public abstract class InterfaceBuilder<T extends InterfaceBuilder<T>> {
         for (UIElementBuilder<?> child : element.children) {
             registerElement(child);
         }
+        linkTabElements(element);
+    }
+
+    private void linkTabElements(UIElementBuilder<?> element) {
+        if (element instanceof TabContentBuilder content) {
+            linkTabContentToNavigation(content);
+        } else if (element instanceof TabNavigationBuilder navigation) {
+            for (UIElementBuilder<?> element1 : elementRegistry.values()) {
+                if (element1 instanceof TabContentBuilder content) {
+                    if (!isMatchingNavigation(content, navigation)) {
+                        continue;
+                    }
+                    String contentId = content.getId();
+                    if (contentId == null || contentId.isBlank()) {
+                        continue;
+                    }
+                    navigation.linkTabContent(content.getTabId(), contentId);
+                    applyInitialTabVisibility(content, navigation);
+                }
+            }
+        }
+    }
+
+    private void linkTabContentToNavigation(TabContentBuilder content) {
+        if (content.getTabId() == null || content.getTabId().isBlank()) {
+            return;
+        }
+        String contentId = content.getId();
+        if (contentId == null || contentId.isBlank()) {
+            return;
+        }
+        for (UIElementBuilder<?> element : elementRegistry.values()) {
+            if (element instanceof TabNavigationBuilder navigation) {
+                if (!isMatchingNavigation(content, navigation)) {
+                    continue;
+                }
+                navigation.linkTabContent(content.getTabId(), contentId);
+                applyInitialTabVisibility(content, navigation);
+                return;
+            }
+        }
+    }
+
+    private boolean isMatchingNavigation(TabContentBuilder content, TabNavigationBuilder navigation) {
+        if (!navigation.hasTab(content.getTabId())) {
+            return false;
+        }
+        String navId = content.getTabNavigationId();
+        return navId == null || navId.isBlank() || navId.equals(navigation.getId());
+    }
+
+    private void applyInitialTabVisibility(TabContentBuilder content, TabNavigationBuilder navigation) {
+        String selectedTabId = navigation.getSelectedTabId();
+        if (selectedTabId == null || selectedTabId.isBlank()) {
+            var tabs = navigation.getTabs();
+            if (!tabs.isEmpty()) {
+                selectedTabId = tabs.get(0).id();
+                navigation.withSelectedTab(selectedTabId);
+            }
+        }
+        if (selectedTabId != null && !selectedTabId.isBlank()) {
+            content.withVisible(selectedTabId.equals(content.getTabId()));
+        }
     }
 
     public <E extends UIElementBuilder<E>> Optional<E> getById(String id, Class<E> clazz) {

@@ -4,6 +4,7 @@ import au.ellie.hyui.HyUIPlugin;
 import au.ellie.hyui.elements.BackgroundSupported;
 import au.ellie.hyui.elements.LayoutModeSupported;
 import au.ellie.hyui.elements.UIElements;
+import au.ellie.hyui.events.UIContext;
 import au.ellie.hyui.theme.Theme;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
@@ -20,16 +21,20 @@ import java.util.List;
  * TabNavigationBuilder.tabNavigation()
  *     .withId("main-tabs")
  *     .addTab("inventory", "Inventory")
- *     .addTab("stats", "Statistics")
+ *     .addTab("stats", "Statistics", "stats-content")
  *     .addTab("settings", "Settings")
  *     .withSelectedTab("inventory")
  */
 public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
         implements LayoutModeSupported<TabNavigationBuilder>, BackgroundSupported<TabNavigationBuilder> {
 
-    public record Tab(String id, String label, boolean selected) {
+    public record Tab(String id, String label, String contentId, boolean selected) {
         public Tab withSelected(boolean selected) {
-            return new Tab(id, label, selected);
+            return new Tab(id, label, contentId, selected);
+        }
+
+        public Tab withContentId(String contentId) {
+            return new Tab(id, label, contentId, selected);
         }
     }
 
@@ -63,7 +68,19 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
      * @param label Display text for the tab button
      */
     public TabNavigationBuilder addTab(String id, String label) {
-        tabs.add(new Tab(id, label, false));
+        tabs.add(new Tab(id, label, null, false));
+        return this;
+    }
+
+    /**
+     * Adds a tab to the navigation with a linked content element ID.
+     *
+     * @param id        Unique identifier for the tab (used in events)
+     * @param label     Display text for the tab button
+     * @param contentId ID of the content element to show when selected
+     */
+    public TabNavigationBuilder addTab(String id, String label, String contentId) {
+        tabs.add(new Tab(id, label, contentId, false));
         return this;
     }
 
@@ -104,6 +121,33 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
      */
     public List<Tab> getTabs() {
         return new ArrayList<>(tabs);
+    }
+
+    public boolean hasTab(String tabId) {
+        if (tabId == null) {
+            return false;
+        }
+        for (Tab tab : tabs) {
+            if (tab.id().equals(tabId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void linkTabContent(String tabId, String contentId) {
+        if (tabId == null || contentId == null) {
+            return;
+        }
+        for (int i = 0; i < tabs.size(); i++) {
+            Tab tab = tabs.get(i);
+            if (tab.id().equals(tabId)) {
+                if (tab.contentId() == null || tab.contentId().isBlank()) {
+                    tabs.set(i, tab.withContentId(contentId));
+                }
+                return;
+            }
+        }
     }
 
     /**
@@ -150,6 +194,10 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
         applyLayoutMode(commands, selector);
         applyBackground(commands, selector);
 
+        if (selectedTabId == null && !tabs.isEmpty()) {
+            selectedTabId = tabs.get(0).id();
+        }
+
         // Only create tab buttons once, we're dealing with builders here, not raw set commands.
         if (tabButtonsCreated) return;
         tabButtonsCreated = true;
@@ -163,15 +211,8 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
                     .withId(tab.id())
                     .withText(tab.label())
                     .addEventListener(CustomUIEventBindingType.Activating, (_, ctx) -> {
-                        ctx.getById(tab.id(), ButtonBuilder.class).ifPresent(button -> {
-                            this.withSelectedTab(tab.id());
-                            button.withStyle(this.selectedTabStyle != null ? 
-                                    this.selectedTabStyle 
-                                    : TabNavigationBuilder.defaultSelectedStyle());
-                            // TODO: show only the element linked to this tab.
-                            //  Need to add to the .addTab(id, label, <tabContentsId>)?
-                            ctx.updatePage(true);
-                        });
+                        applyTabSelection(ctx, tab.id());
+                        ctx.updatePage(true);
                     })
                     .withFlexWeight(1);
 
@@ -188,19 +229,36 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
         }
     }
 
+    private void applyTabSelection(UIContext ctx, String tabId) {
+        this.selectedTabId = tabId;
+        for (Tab tab : tabs) {
+            boolean isSelected = tab.id().equals(tabId);
+            ctx.getById(tab.id(), ButtonBuilder.class).ifPresent(button -> {
+                HyUIStyle style = isSelected
+                        ? selectedTabStyle != null ? selectedTabStyle : defaultSelectedStyle()
+                        : unselectedTabStyle != null ? unselectedTabStyle : defaultUnselectedStyle();
+                button.withStyle(style);
+            });
+            String contentId = tab.contentId();
+            if (contentId != null && !contentId.isBlank()) {
+                ctx.getById(contentId, TabContentBuilder.class).ifPresent(content -> content.withVisible(isSelected));
+            }
+        }
+    }
+
     /**
      * Creates a default style for selected tabs (bold, highlighted).
      */
     public static HyUIStyle defaultSelectedStyle() {
-        return new HyUIStyle()
-                .setRenderBold(true);
+        return new HyUIStyle();
+                //.setRenderBold(true);
     }
 
     /**
      * Creates a default style for unselected tabs (normal, dimmed).
      */
     public static HyUIStyle defaultUnselectedStyle() {
-        return new HyUIStyle()
-                .setRenderBold(false);
+        return new HyUIStyle();
+                 //.setRenderBold(false);
     }
 }

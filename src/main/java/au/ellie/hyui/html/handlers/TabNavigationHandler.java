@@ -8,6 +8,8 @@ import au.ellie.hyui.utils.ParseUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.List;
+
 /**
  * Handler for tab navigation elements in HYUIML.
  *
@@ -26,8 +28,13 @@ import org.jsoup.select.Elements;
  *
  * Or simplified:
  * <pre>
- * &lt;nav class="tabs" data-tabs="inventory:Inventory,stats:Statistics,settings:Settings" data-selected="inventory"&gt;
+ * &lt;nav class="tabs" data-tabs="inventory:Inventory:inventory-content,stats:Statistics:stats-content" data-selected="inventory"&gt;
  * &lt;/nav&gt;
+ * </pre>
+ *
+ * Content can be linked with a third entry in data-tabs or a data-tab-content attribute:
+ * <pre>
+ * &lt;button data-tab="inventory" data-tab-content="inventory-content"&gt;Inventory&lt;/button&gt;
  * </pre>
  */
 public class TabNavigationHandler implements TagHandler {
@@ -45,12 +52,20 @@ public class TabNavigationHandler implements TagHandler {
 
         applyCommonAttributes(builder, element);
 
+        String selectedTabId = element.hasAttr("data-selected") ? element.attr("data-selected").trim() : null;
+        if (selectedTabId != null && selectedTabId.isBlank()) {
+            selectedTabId = null;
+        }
+
         // Check for simplified data-tabs attribute
         if (element.hasAttr("data-tabs")) {
             String tabsAttr = element.attr("data-tabs");
             for (String tabDef : tabsAttr.split(",")) {
-                String[] parts = tabDef.trim().split(":", 2);
-                if (parts.length == 2) {
+                String[] parts = tabDef.trim().split(":", 3);
+                if (parts.length == 3) {
+                    String contentId = parts[2].trim();
+                    builder.addTab(parts[0].trim(), parts[1].trim(), contentId.isEmpty() ? null : contentId);
+                } else if (parts.length == 2) {
                     builder.addTab(parts[0].trim(), parts[1].trim());
                 } else if (parts.length == 1 && !parts[0].isEmpty()) {
                     // Use the same value for id and label
@@ -59,25 +74,34 @@ public class TabNavigationHandler implements TagHandler {
             }
         }
 
-        // Set selected tab from data-selected attribute
-        if (element.hasAttr("data-selected")) {
-            builder.withSelectedTab(element.attr("data-selected"));
-        }
-
         // Parse child button elements for tab definitions
         Elements buttons = element.select("> button, > a");
         for (Element button : buttons) {
             String tabId = button.hasAttr("data-tab") ? button.attr("data-tab") : button.attr("id");
             String label = button.text().trim();
+            String contentId = button.hasAttr("data-tab-content") ? button.attr("data-tab-content") : null;
 
             if (tabId != null && !tabId.isEmpty() && !label.isEmpty()) {
-                builder.addTab(tabId, label);
+                if (contentId != null && !contentId.isBlank()) {
+                    builder.addTab(tabId, label, contentId.trim());
+                } else {
+                    builder.addTab(tabId, label);
+                }
 
                 // Check if this tab is marked as active/selected
-                if (button.hasClass("active") || button.hasClass("selected")) {
-                    builder.withSelectedTab(tabId);
+                if ((button.hasClass("active") || button.hasClass("selected")) && selectedTabId == null) {
+                    selectedTabId = tabId;
                 }
             }
+        }
+
+        if (selectedTabId == null && !builder.getTabs().isEmpty()) {
+            selectedTabId = builder.getTabs().get(0).id();
+        }
+
+        if (selectedTabId != null && !selectedTabId.isBlank()) {
+            builder.withSelectedTab(selectedTabId);
+            applyTabContentVisibility(element, builder.getTabs(), selectedTabId);
         }
 
         // Apply tab spacing if specified
@@ -87,5 +111,72 @@ public class TabNavigationHandler implements TagHandler {
         }
 
         return builder;
+    }
+
+    private void applyTabContentVisibility(Element navElement, List<TabNavigationBuilder.Tab> tabs, String selectedTabId) {
+        if (selectedTabId == null || selectedTabId.isBlank()) {
+            return;
+        }
+        var doc = navElement.ownerDocument();
+        if (doc == null) {
+            return;
+        }
+        for (TabNavigationBuilder.Tab tab : tabs) {
+            String contentId = tab.contentId();
+            if (contentId == null || contentId.isBlank()) {
+                continue;
+            }
+            Element content = doc.getElementById(contentId);
+            if (content == null) {
+                continue;
+            }
+            boolean isSelected = tab.id().equals(selectedTabId);
+            String updatedStyle = upsertStyleProperty(content.attr("style"), "visibility", isSelected ? "shown" : "hidden");
+            content.attr("style", updatedStyle);
+        }
+    }
+
+    private String upsertStyleProperty(String styleAttr, String property, String value) {
+        String normalizedProperty = property.toLowerCase();
+        String style = styleAttr == null ? "" : styleAttr.trim();
+        StringBuilder sb = new StringBuilder();
+        boolean replaced = false;
+
+        if (!style.isEmpty()) {
+            String[] declarations = style.split(";");
+            for (String declaration : declarations) {
+                String trimmed = declaration.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                String[] parts = trimmed.split(":", 2);
+                if (parts.length != 2) {
+                    continue;
+                }
+                String key = parts[0].trim().toLowerCase();
+                String val = parts[1].trim();
+                if (key.equals(normalizedProperty)) {
+                    if (!replaced) {
+                        appendStyle(sb, property, value);
+                        replaced = true;
+                    }
+                } else {
+                    appendStyle(sb, parts[0].trim(), val);
+                }
+            }
+        }
+
+        if (!replaced) {
+            appendStyle(sb, property, value);
+        }
+
+        return sb.toString();
+    }
+
+    private void appendStyle(StringBuilder sb, String property, String value) {
+        if (sb.length() > 0) {
+            sb.append("; ");
+        }
+        sb.append(property).append(": ").append(value);
     }
 }
