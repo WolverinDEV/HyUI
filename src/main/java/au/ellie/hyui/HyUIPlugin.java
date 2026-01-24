@@ -40,36 +40,36 @@ public class HyUIPlugin extends JavaPlugin {
             this.getCommandRegistry().registerCommand(new HyUIUpdateHudCommand());
             this.getCommandRegistry().registerCommand(new HyUIShowcaseCommand());
             
-            this.getEventRegistry().registerGlobal(PlayerReadyEvent.class, event -> {
-                instance.logInfo("Player ready event triggered for " + event.getPlayer().getDisplayName());
-                
-                var player = event.getPlayer();
-                if (player == null) return;
-
-                Ref<EntityStore> ref = player.getReference();
-                if (ref == null || !ref.isValid()) return;
-                
-                Store<EntityStore> store = ref.getStore();
-                World world = store.getExternalData().getWorld();
-                world.execute(() -> {
-                    PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
-                    
-                    String html = """
-                        <div style="layout: top;"><p id="text"></p>
-                        <img src="lizard.png" width="100" height="60"></div>
-                        """;
-                    var hud = HudBuilder.detachedHud()
-                            .fromHtml(html)
-                            .withRefreshRate(1000)
-                            .onRefresh((h) -> {
-                                h.getById("text", LabelBuilder.class).ifPresent((builder) -> {
-                                    builder.withText("Hello, World! " + System.currentTimeMillis());
-                                });
-                            })
-                            .show(playerRef, store);
-                });
-
-            });
+//            this.getEventRegistry().registerGlobal(PlayerReadyEvent.class, event -> {
+//                instance.logInfo("Player ready event triggered for " + event.getPlayer().getDisplayName());
+//
+//                var player = event.getPlayer();
+//                if (player == null) return;
+//
+//                Ref<EntityStore> ref = player.getReference();
+//                if (ref == null || !ref.isValid()) return;
+//
+//                Store<EntityStore> store = ref.getStore();
+//                World world = store.getExternalData().getWorld();
+//                world.execute(() -> {
+//                    PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
+//
+//                    String html = """
+//                        <div style="layout: top;"><p id="text"></p>
+//                        <img src="lizard.png" width="100" height="60"></div>
+//                        """;
+//                    var hud = HudBuilder.detachedHud()
+//                            .fromHtml(html)
+//                            .withRefreshRate(1000)
+//                            .onRefresh((h) -> {
+//                                h.getById("text", LabelBuilder.class).ifPresent((builder) -> {
+//                                    builder.withText("Hello, World! " + System.currentTimeMillis());
+//                                });
+//                            })
+//                            .show(playerRef, store);
+//                });
+//
+//            });
         }
         
     }
