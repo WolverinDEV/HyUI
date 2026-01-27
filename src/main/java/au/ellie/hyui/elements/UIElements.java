@@ -21,6 +21,7 @@ public class UIElements {
     public static final String PAGE_OVERLAY = "PageOverlay";
     public static final String CONTAINER = "Container";
     public static final String TEXT_BUTTON = "TextButton";
+    public static final String CUSTOM_TEXT_BUTTON = "CustomTextButton";
     public static final String SECONDARY_TEXT_BUTTON = "SecondaryTextButton";
     public static final String SMALL_SECONDARY_TEXT_BUTTON = "SmallSecondaryTextButton";
     public static final String TERTIARY_TEXT_BUTTON = "TertiaryTextButton";
@@ -31,6 +32,7 @@ public class UIElements {
     public static final String MACRO_NUMBER_FIELD = "NumberField";
     public static final String BACK_BUTTON = "BackButton";
     public static final String RAW_BUTTON = "Button";
+    public static final String CUSTOM_BUTTON = "CustomButton";
     public static final String ASSET_IMAGE = "AssetImage";
     public static final String ITEM_ICON_MACRO = "ItemIcon";
     public static final String TIMER_LABEL = "TimerLabel";

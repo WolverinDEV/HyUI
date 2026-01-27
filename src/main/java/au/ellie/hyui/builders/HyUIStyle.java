@@ -249,6 +249,73 @@ public class HyUIStyle {
                 ", rawProperties=" + rawProperties +
                 '}';
     }
+    
+    public String toLabelStyle() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        boolean isFirst = true;
+        if (fontSize != null) {
+            sb.append("FontSize: ").append(fontSize.intValue());
+            isFirst = false;
+        }
+        if (fontName != null) {
+            if (!isFirst) sb.append(", ");
+            sb.append("FontName: ").append(fontName);
+            isFirst = false;
+        }
+        if (letterSpacing != null) {
+            if (!isFirst) sb.append(", ");
+            sb.append("LetterSpacing: ").append(letterSpacing);
+            isFirst = false;
+        }
+        if (textColor != null) {
+            if (!isFirst) sb.append(", ");
+            sb.append("TextColor: ").append(textColor);
+            isFirst = false;
+        }
+        if (renderBold != null) {
+            if (!isFirst) sb.append(", ");
+            sb.append("RenderBold: ").append(renderBold);
+            isFirst = false;
+        }
+        if (renderUppercase != null) {
+            if (!isFirst) sb.append(", ");
+            sb.append("RenderUppercase: ").append(renderUppercase);
+            isFirst = false;
+        }
+        if (renderItalics != null) {
+            if (!isFirst) sb.append(", ");
+            sb.append("RenderItalics: ").append(renderItalics);
+            isFirst = false;
+        }
+        if (alignment != null) {
+            if (!isFirst) sb.append(", ");
+            sb.append("Alignment: ").append(alignment.name());
+            isFirst = false;
+        }
+        if (horizontalAlignment != null) {
+            if (!isFirst) sb.append(", ");
+            sb.append("HorizontalAlignment: ").append(horizontalAlignment.name());
+            isFirst = false;
+        }
+        if (verticalAlignment != null) {
+            if (!isFirst) sb.append(", ");
+            sb.append("VerticalAlignment: ").append(verticalAlignment.name());
+            isFirst = false;
+        }
+        if (outlineColor != null) {
+            if (!isFirst) sb.append(", ");
+            sb.append("OutlineColor: ").append(outlineColor);
+            isFirst = false;
+        }
+        if (wrap != null) {
+            if (!isFirst) sb.append(", ");
+            sb.append("Wrap: ").append(wrap);
+            isFirst = false;
+        }
+        sb.append(")");
+        return sb.toString();
+    }
 
     public Map<String, HyUIStyle> getStates() {
         return states;

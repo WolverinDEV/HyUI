@@ -115,6 +115,26 @@ public interface TagHandler {
         }
     }
 
+    default String resolveCssStyleDefinition(Element element, String rawValue) {
+        if (rawValue == null) {
+            return null;
+        }
+        String trimmed = rawValue.trim();
+        if ((trimmed.startsWith("\"") && trimmed.endsWith("\"")) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+            trimmed = trimmed.substring(1, trimmed.length() - 1).trim();
+        }
+        if (trimmed.startsWith("@")) {
+            String name = trimmed.substring(1).trim();
+            if (!name.isEmpty() && element.ownerDocument() != null && element.ownerDocument().body() != null) {
+                String resolved = element.ownerDocument().body().attr("data-hyui-style-def-" + name);
+                if (resolved != null && !resolved.isBlank()) {
+                    return resolved;
+                }
+            }
+        }
+        return trimmed;
+    }
+
     private Map<String, Object> parseStyleAttribute(String styleAttr) {
         Map<String, Object> styles = new HashMap<>();
         String[] declarations = styleAttr.split(";");

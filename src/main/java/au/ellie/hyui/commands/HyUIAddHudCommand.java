@@ -95,7 +95,7 @@ public class HyUIAddHudCommand extends AbstractAsyncCommand {
         }
         var hud2 = HudBuilder.detachedHud()
                 .fromHtml(html)
-                .withRefreshRate(1000)
+                .withRefreshRate(5000)
                 .onRefresh((h) -> {
                     h.getById("Hello", LabelBuilder.class).ifPresent((builder) -> {
                         builder.withText("Hello, World! " + System.currentTimeMillis());
@@ -103,6 +103,8 @@ public class HyUIAddHudCommand extends AbstractAsyncCommand {
                     //playerRef.sendMessage(Message.raw("HUD Refreshed!"));
                 })
                 .show(playerRef, store);
-        HUD_INSTANCES.add(hud2);
+        hud2.getById("Hello", LabelBuilder.class).ifPresent((builder) -> {
+            builder.withText("Hello, BAD! " + System.currentTimeMillis());
+        });
     }
 }

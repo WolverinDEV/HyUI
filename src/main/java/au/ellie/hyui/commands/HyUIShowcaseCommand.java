@@ -317,6 +317,20 @@ public class HyUIShowcaseCommand extends AbstractAsyncCommand {
                 
                         <div id="inputs-content" class="tab-content" data-hyui-tab-id="inputs" style="flex-direction: column;">
                             <p style="color: #4CAF50; font-size: 24; font-weight: bold; anchor-height: 30;">6. Input Types</p>
+                            <style>
+                                @ShowcaseHoveredLabel {
+                                    font-weight: bold;
+                                    color: #ffffff;
+                                    font-size: 18;
+                                }
+                                @ShowcaseHoveredBackground {
+                                    background-color: #0c0c0c;
+                                }
+                                @ShowcaseCustomBackground {
+                                    background-image: url('Common/ShopTest.png');
+                                    background-color: rgba(255, 0, 0, 0.25);
+                                }
+                            </style>
                             <div style="flex-direction: row; anchor-height: 320; gap: 10;">
                                 <div style="background-color: #2a2a3e; padding: 10; flex-weight: 1; flex-direction: column;">
                                     <p style="color: #888888; font-size: 18; anchor-height: 18;">Text</p>
@@ -355,6 +369,14 @@ public class HyUIShowcaseCommand extends AbstractAsyncCommand {
                                             data-hyui-fps="30"
                                             style="anchor-width: 32; anchor-height: 32;">
                                     </sprite>
+                                    <p style="color: #888888; font-size: 18; anchor-height: 18;">Custom Buttons</p>
+                                    <button class="custom-textbutton"
+                                            data-hyui-default-label-style="@ShowcaseHoveredLabel"
+                                            data-hyui-default-bg="@ShowcaseHoveredBackground"
+                                            style="anchor-height: 30;">Custom Text</button>
+                                    <button class="custom-button"
+                                            data-hyui-default-bg="@ShowcaseCustomBackground"
+                                            style="anchor-width: 44; anchor-height: 44;"></button>
                                 </div>
                             </div>
                         </div>
