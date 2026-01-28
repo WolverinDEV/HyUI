@@ -14,6 +14,7 @@ import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -137,6 +138,14 @@ public class ItemGridBuilder extends UIElementBuilder<ItemGridBuilder> implement
         return this;
     }
 
+    /**
+     * Retrieves an unmodifiable list of slots in the item grid.
+     * @return An unmodifiable list of slots
+     */
+    public List<ItemGridSlot> getSlots() {
+        return Collections.unmodifiableList(this.slots);
+    }
+    
     @Override
     protected boolean supportsStyling() {
         return true;
