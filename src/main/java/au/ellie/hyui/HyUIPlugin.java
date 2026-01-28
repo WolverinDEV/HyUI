@@ -40,6 +40,7 @@ public class HyUIPlugin extends JavaPlugin {
             this.getCommandRegistry().registerCommand(new HyUIUpdateHudCommand());
             this.getCommandRegistry().registerCommand(new HyUIShowcaseCommand());
             this.getCommandRegistry().registerCommand(new HyUITemplateRuntimeCommand());
+            this.getCommandRegistry().registerCommand(new HyUIBountyCommand());
             
             this.getEventRegistry().registerGlobal(PlayerReadyEvent.class, event -> {
                 instance.logInfo("Player ready event triggered for " + event.getPlayer().getDisplayName());

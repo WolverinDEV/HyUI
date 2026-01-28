@@ -94,13 +94,13 @@ public class HudBuilder extends InterfaceBuilder<HudBuilder> {
      * Shows the HUD for the specified player using the provided entity store.
      * This also adds and manages multiple HUDs, there is no need to check the active HUD.
      * 
-     * @param playerRef The player reference for whom the HUD should be shown.
+     * @param playerRefParam The player reference for whom the HUD should be shown.
      * @return The created HyUIHud instance.
      */
-    public HyUIHud show(@Nonnull PlayerRef playerRef) {
+    public HyUIHud show(@Nonnull PlayerRef playerRefParam) {
         String name = "HYUIHUD" + System.currentTimeMillis();
-        
-        this.lastHud = new HyUIHud(name, playerRef, uiFile, getTopLevelElements(), editCallbacks, templateHtml, templateProcessor, runtimeTemplateUpdatesEnabled);
+        sendDynamicImageIfNeeded(playerRefParam);
+        this.lastHud = new HyUIHud(name, playerRefParam, uiFile, getTopLevelElements(), editCallbacks, templateHtml, templateProcessor, runtimeTemplateUpdatesEnabled);
         this.lastHud.setRefreshRateMs(refreshRateMs);
         this.lastHud.setRefreshListener(refreshListener);
         HyUIPlugin.getLog().logInfo("Adding to a MultiHud: " + name);

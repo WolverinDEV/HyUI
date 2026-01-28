@@ -1,0 +1,13 @@
+<div class="page-overlay">
+    <div class="decorated-container" data-hyui-title="{{$title}}">
+        <div class="container-contents" style="layout-mode: Top;">
+            <p id="summary" style="padding: 4;">{{$summary}}</p>
+
+            <div id="list" style="layout-mode: Top; padding: 6;">
+                {{#each bounties}}
+                {{@bountyCard:title={{$title}},level={{$level}},rarity={{$rarity}}}}
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>
