@@ -86,15 +86,6 @@ public class ItemSlotBuilder extends UIElementBuilder<ItemSlotBuilder> {
             commands.set(selector + ".ItemId", itemId);
         }
 
-        // Sadface.
-/*        listeners.forEach(listener -> {
-            if (listener.type() == CustomUIEventBindingType.Dropped) {
-                String eventId = getEffectiveId();
-                events.addEventBinding(CustomUIEventBindingType.Dropped, selector,
-                        EventData.of("Action", CustomUIEventBindingType.Dropped.name())
-                                .append("Target", eventId),
-                        false);
-            }
-        });*/
+        // There are LITERALLY NO EVENTS that work on ItemSlot!?!?
     }
 }

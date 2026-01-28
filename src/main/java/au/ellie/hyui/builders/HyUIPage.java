@@ -115,4 +115,10 @@ public class HyUIPage extends InteractiveCustomUIPage<DynamicPageData> implement
         super.handleDataEvent(ref, store, data);
         delegate.handleDataEventInternal(data, this);
     }
+
+    @Override
+    public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, @Nonnull String data) {
+        super.handleDataEvent(ref, store, data);
+        HyUIPlugin.getLog().logInfo("Handling data event: " + data);
+    }
 }

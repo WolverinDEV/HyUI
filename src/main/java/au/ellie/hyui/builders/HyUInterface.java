@@ -1,6 +1,16 @@
 package au.ellie.hyui.builders;
 
 import au.ellie.hyui.HyUIPluginLogger;
+import au.ellie.hyui.events.DragCancelledEventData;
+import au.ellie.hyui.events.DroppedEventData;
+import au.ellie.hyui.events.SlotClickPressWhileDraggingEventData;
+import au.ellie.hyui.events.SlotClickReleaseWhileDraggingEventData;
+import au.ellie.hyui.events.SlotClickingEventData;
+import au.ellie.hyui.events.SlotDoubleClickingEventData;
+import au.ellie.hyui.events.SlotMouseDragCompletedEventData;
+import au.ellie.hyui.events.SlotMouseDragExitedEventData;
+import au.ellie.hyui.events.SlotMouseEnteredEventData;
+import au.ellie.hyui.events.SlotMouseExitedEventData;
 import au.ellie.hyui.events.UIContext;
 import au.ellie.hyui.events.UIEventListener;
 import au.ellie.hyui.html.HtmlParser;
@@ -12,7 +22,6 @@ import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import au.ellie.hyui.HyUIPlugin;
-import au.ellie.hyui.events.UIEventActions;
 import au.ellie.hyui.events.DynamicPageData;
 
 import javax.annotation.Nonnull;
@@ -239,46 +248,41 @@ public abstract class HyUInterface implements UIContext {
 
         if (internalId != null) {
             String target = data.getValue("Target");
+            Optional<CustomUIEventBindingType> actionType = resolveActionType(data.action);
 
             List<UIEventListener<?>> listeners = new ArrayList<>(element.getListeners());
             for (UIEventListener<?> listener : listeners) {
-                if (listener.type() == CustomUIEventBindingType.Activating && UIEventActions.BUTTON_CLICKED.equals(data.action)) {
-                    if (internalId.equals(target)) {
-                        ((UIEventListener<Void>) listener).callback().accept(null, context);
-                    }
-                } else if (listener.type() == CustomUIEventBindingType.ValueChanged
-                        || listener.type() == CustomUIEventBindingType.FocusLost
-                        || listener.type() == CustomUIEventBindingType.FocusGained) {
-                    if (!internalId.equals(target)) {
-                        continue;
-                    }
+                if (!internalId.equals(target)) {
+                    continue;
+                }
+                if (actionType.isEmpty() || listener.type() != actionType.get()) {
+                    continue;
+                }
 
-                    boolean shouldHandle = switch (listener.type()) {
-                        case CustomUIEventBindingType.ValueChanged -> UIEventActions.VALUE_CHANGED.equals(data.action);
-                        case CustomUIEventBindingType.FocusLost -> UIEventActions.FOCUS_LOST.equals(data.action);
-                        case CustomUIEventBindingType.FocusGained -> UIEventActions.FOCUS_GAINED.equals(data.action);
-                        default -> false;
-                    };
+                if (listener.type() == CustomUIEventBindingType.Activating) {
+                    ((UIEventListener<Void>) listener).callback().accept(null, context);
+                    continue;
+                }
+                if (isSlotEventRelated(listener.type())) {
+                    Object payload = buildEventPayload(listener.type(), data);
+                    ((UIEventListener<Object>) listener).callback().accept(payload, context);
+                    continue;
+                }
 
-                    if (!shouldHandle) {
-                        continue;
-                    }
+                String rawValue = element.usesRefValue() ? data.getValue("RefValue") : data.getValue("Value");
+                Object finalValue = rawValue != null ? element.parseValue(rawValue) : null;
 
-                    String rawValue = element.usesRefValue() ? data.getValue("RefValue") : data.getValue("Value");
-                    Object finalValue = rawValue != null ? element.parseValue(rawValue) : null;
+                // TODO: Seems like a bit of a hackaround to deal with the multiple events firing.
+                if (finalValue != null && userId != null && listener.type() != CustomUIEventBindingType.FocusGained) {
+                    //Object previous = elementValues.get(userId);
+                    //if (!Objects.equals(previous, finalValue)) {
+                        elementValues.put(userId, finalValue);
+                        dirtyValueIds.add(userId);
+                    //}
+                }
 
-                    // TODO: Seems like a bit of a hackaround to deal with the multiple events firing.
-                    if (finalValue != null && userId != null && listener.type() != CustomUIEventBindingType.FocusGained) {
-                        //Object previous = elementValues.get(userId);
-                        //if (!Objects.equals(previous, finalValue)) {
-                            elementValues.put(userId, finalValue);
-                            dirtyValueIds.add(userId);
-                        //}
-                    }
-
-                    if (finalValue != null) {
-                        ((UIEventListener<Object>) listener).callback().accept(finalValue, context);
-                    }
+                if (finalValue != null) {
+                    ((UIEventListener<Object>) listener).callback().accept(finalValue, context);
                 }
             }
         }
@@ -286,6 +290,49 @@ public abstract class HyUInterface implements UIContext {
         List<UIElementBuilder<?>> children = new ArrayList<>(element.children);
         for (UIElementBuilder<?> child : children) {
             handleElementEvents(child, data, context);
+        }
+    }
+
+    private boolean isSlotEventRelated(CustomUIEventBindingType type) {
+        return type == CustomUIEventBindingType.SlotClicking
+                || type == CustomUIEventBindingType.SlotDoubleClicking
+                || type == CustomUIEventBindingType.SlotMouseEntered
+                || type == CustomUIEventBindingType.SlotMouseExited
+                || type == CustomUIEventBindingType.DragCancelled
+                || type == CustomUIEventBindingType.Dropped
+                || type == CustomUIEventBindingType.SlotMouseDragCompleted
+                || type == CustomUIEventBindingType.SlotMouseDragExited
+                || type == CustomUIEventBindingType.SlotClickReleaseWhileDragging
+                || type == CustomUIEventBindingType.SlotClickPressWhileDragging;
+    }
+
+    private Object buildEventPayload(CustomUIEventBindingType type, DynamicPageData data) {
+        return switch (type) {
+            case SlotClicking -> SlotClickingEventData.from(data);
+            case SlotDoubleClicking -> SlotDoubleClickingEventData.from(data);
+            case SlotMouseEntered -> SlotMouseEnteredEventData.from(data);
+            case SlotMouseExited -> SlotMouseExitedEventData.from(data);
+            case DragCancelled -> new DragCancelledEventData();
+            case Dropped -> DroppedEventData.from(data);
+            case SlotMouseDragCompleted -> SlotMouseDragCompletedEventData.from(data);
+            case SlotMouseDragExited -> SlotMouseDragExitedEventData.from(data);
+            case SlotClickReleaseWhileDragging -> SlotClickReleaseWhileDraggingEventData.from(data);
+            case SlotClickPressWhileDragging -> SlotClickPressWhileDraggingEventData.from(data);
+            default -> null;
+        };
+    }
+
+    private Optional<CustomUIEventBindingType> resolveActionType(String action) {
+        if (action == null || action.isBlank()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(CustomUIEventBindingType.valueOf(action));
+        } catch (IllegalArgumentException e) {
+            if ("ButtonClicked".equals(action)) {
+                return Optional.of(CustomUIEventBindingType.Activating);
+            }
+            return Optional.empty();
         }
     }
 

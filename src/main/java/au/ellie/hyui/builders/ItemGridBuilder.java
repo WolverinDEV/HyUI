@@ -6,11 +6,13 @@ import au.ellie.hyui.elements.LayoutModeSupported;
 import au.ellie.hyui.elements.ScrollbarStyleSupported;
 import au.ellie.hyui.elements.UIElements;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
+import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.ui.ItemGridSlot;
 import com.hypixel.hytale.server.core.ui.builder.EventData;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +35,8 @@ public class ItemGridBuilder extends UIElementBuilder<ItemGridBuilder> implement
     private Boolean showScrollbar;
     private Integer slotsPerRow;
     private final List<ItemGridSlot> slots = new ArrayList<>();
+    private static final Field ITEM_STACK_FIELD;
+    private static final boolean ITEM_STACK_FIELD_AVAILABLE;
 
     public ItemGridBuilder() {
         super(UIElements.ITEM_GRID, "#HyUIItemGrid");
@@ -171,7 +175,7 @@ public class ItemGridBuilder extends UIElementBuilder<ItemGridBuilder> implement
         applyLayoutMode(commands, selector);
         applyBackground(commands, selector);
         applyScrollbarStyle(commands, selector);
-
+        
         if (backgroundMode != null) {
             HyUIPlugin.getLog().logInfo("Setting BackgroundMode: " + backgroundMode + " for " + selector);
             commands.set(selector + ".BackgroundMode", backgroundMode);
@@ -183,6 +187,9 @@ public class ItemGridBuilder extends UIElementBuilder<ItemGridBuilder> implement
         if (areItemsDraggable != null) {
             HyUIPlugin.getLog().logInfo("Setting AreItemsDraggable: " + areItemsDraggable + " for " + selector);
             commands.set(selector + ".AreItemsDraggable", areItemsDraggable);
+            if (areItemsDraggable) {
+                setAllSlotsActivatable();
+            }
         }
         if (keepScrollPosition != null) {
             HyUIPlugin.getLog().logInfo("Setting KeepScrollPosition: " + keepScrollPosition + " for " + selector);
@@ -200,26 +207,66 @@ public class ItemGridBuilder extends UIElementBuilder<ItemGridBuilder> implement
             HyUIPlugin.getLog().logInfo("Setting Slots for " + selector);
             commands.set(selector + ".Slots", slots);
         }
-
+        
         listeners.forEach(listener -> {
             CustomUIEventBindingType type = listener.type();
-            if (type == CustomUIEventBindingType.SlotClicking
-                    || type == CustomUIEventBindingType.SlotDoubleClicking
-                    || type == CustomUIEventBindingType.SlotMouseEntered
-                    || type == CustomUIEventBindingType.SlotMouseExited
-                    || type == CustomUIEventBindingType.DragCancelled
-                    || type == CustomUIEventBindingType.Dropped
-                    || type == CustomUIEventBindingType.SlotMouseDragCompleted
-                    || type == CustomUIEventBindingType.SlotMouseDragExited
-                    || type == CustomUIEventBindingType.SlotClickReleaseWhileDragging
-                    || type == CustomUIEventBindingType.SlotClickPressWhileDragging) {
-                String eventId = getEffectiveId();
-                // Untested: cannot find server-side examples for item-grid slot events.
-                events.addEventBinding(type, selector,
-                        EventData.of("Action", type.name())
-                                .append("Target", eventId),
-                        false);
-            }
+            if (type == CustomUIEventBindingType.Activating 
+                    || type == CustomUIEventBindingType.RightClicking
+                    || type == CustomUIEventBindingType.DoubleClicking
+                    || type == CustomUIEventBindingType.MouseEntered
+                    || type == CustomUIEventBindingType.MouseExited
+                    || type == CustomUIEventBindingType.MouseButtonReleased
+                    || type == CustomUIEventBindingType.ValueChanged
+                    || type == CustomUIEventBindingType.ElementReordered
+                    || type == CustomUIEventBindingType.Validating
+                    || type == CustomUIEventBindingType.Dismissing
+                    || type == CustomUIEventBindingType.FocusGained
+                    || type == CustomUIEventBindingType.FocusLost
+                    || type == CustomUIEventBindingType.KeyDown
+                    || type == CustomUIEventBindingType.SelectedTabChanged
+                )
+                return;
+            String eventId = getEffectiveId();
+            HyUIPlugin.getLog().logInfo("Adding " + type.name());
+            events.addEventBinding(type, selector,
+                    EventData.of("Action", type.name())
+                            .append("Target", eventId),
+                    false);
         });
+    }
+
+    static {
+        Field itemStackField = null;
+        boolean available = false;
+        try {
+            itemStackField = ItemGridSlot.class.getDeclaredField("itemStack");
+            itemStackField.setAccessible(true);
+            available = true;
+        } catch (NoSuchFieldException e) {
+            HyUIPlugin.getLog().logInfo("ItemGridSlot.itemStack field not found; empty slots will still be activatable.");
+        }
+        ITEM_STACK_FIELD = itemStackField;
+        ITEM_STACK_FIELD_AVAILABLE = available;
+    }
+
+    private void setAllSlotsActivatable() {
+        for (var slot : slots) {
+            if (!slot.isActivatable()) {
+                slot.setActivatable(true);
+            }
+        }
+    }
+
+    // Might need it one day.
+    private static ItemStack getItemStack(ItemGridSlot slot) {
+        if (!ITEM_STACK_FIELD_AVAILABLE) {
+            return null;
+        }
+        try {
+            return (ItemStack)ITEM_STACK_FIELD.get(slot);
+        } catch (IllegalAccessException e) {
+            HyUIPlugin.getLog().logInfo("Unable to access ItemGridSlot.itemStack.");
+            return null;
+        }
     }
 }

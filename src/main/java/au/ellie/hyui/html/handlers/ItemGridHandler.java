@@ -72,6 +72,7 @@ public class ItemGridHandler implements TagHandler {
             if (stack != null) {
                 slot.setItemStack(stack);
             }
+        } else {
         }
         if (element.hasAttr("data-hyui-name")) {
             slot.setName(element.attr("data-hyui-name"));
@@ -110,13 +111,13 @@ public class ItemGridHandler implements TagHandler {
                 slot.setIcon(icon);
             }
         }
-
         return slot;
     }
 
     private ItemStack createItemStack(String itemId, int quantity) {
         if (itemId == null || itemId.isBlank()) {
-            return null;
+            // We default to empty instead of null, this way we still retain some item in it.
+            return ItemStack.EMPTY;
         }
         return new ItemStack(itemId, quantity);
     }

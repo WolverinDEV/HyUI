@@ -56,7 +56,7 @@ public class HyUIPlugin extends JavaPlugin {
                 world.execute(() -> {
                     PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
                     String html = "<hyvatar username='" + player.getDisplayName() + "' size='64'></hyvatar><div style='anchor-width: 400; anchor-height: 50;'><progress value='50' max='100' data-hyui-bar-texture-path='Common/ShopTest.png'></progress></div>";
-                    var hud = HudBuilder.detachedHud()
+                    /*var hud = HudBuilder.detachedHud()
                             .fromHtml(html)
                             .withRefreshRate(1000)
                             .onRefresh((h) -> {
@@ -64,7 +64,7 @@ public class HyUIPlugin extends JavaPlugin {
                                     builder.withText("Hello, World! " + System.currentTimeMillis());
                                 });
                             })
-                            .show(playerRef);
+                            .show(playerRef);*/
                 });
 
             });

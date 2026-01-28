@@ -259,22 +259,19 @@ public class TextFieldBuilder extends UIElementBuilder<TextFieldBuilder> {
             addEventListener(CustomUIEventBindingType.ValueChanged, (_, _) -> {});
             addEventListener(CustomUIEventBindingType.FocusLost, (_, _) -> {});
             addEventListener(CustomUIEventBindingType.FocusGained, (_, _) -> {});
+            addEventListener(CustomUIEventBindingType.Validating, (_, _) -> {});
         }
         listeners.forEach(listener -> {
-            if (listener.type() == CustomUIEventBindingType.ValueChanged || 
+            if (listener.type() == CustomUIEventBindingType.ValueChanged ||
                     listener.type() == CustomUIEventBindingType.FocusLost ||
+                    listener.type() == CustomUIEventBindingType.Validating ||
                     listener.type() == CustomUIEventBindingType.FocusGained) {
                 String eventId = getEffectiveId();
                 HyUIPlugin.getLog().logInfo("Adding " + listener.type() + " event binding for " + selector + " with eventId: " + eventId);
                 events.addEventBinding(listener.type(), selector,
                         EventData.of("@Value", selector + ".Value")
                                 .append("Target", eventId)
-                                .append("Action", switch (listener.type()) {
-                                    case CustomUIEventBindingType.ValueChanged -> UIEventActions.VALUE_CHANGED;
-                                    case CustomUIEventBindingType.FocusLost -> UIEventActions.FOCUS_LOST;
-                                    case CustomUIEventBindingType.FocusGained -> UIEventActions.FOCUS_GAINED;
-                                    default -> throw new IllegalStateException("Unexpected UI Event Action: " + listener.type());
-                                }),
+                                .append("Action", listener.type().name()),
                         false);
             }
         });

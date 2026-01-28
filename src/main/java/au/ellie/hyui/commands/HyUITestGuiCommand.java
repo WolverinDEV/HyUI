@@ -3,6 +3,7 @@ package au.ellie.hyui.commands;
 import au.ellie.hyui.HyUIPlugin;
 import au.ellie.hyui.HyUIPluginLogger;
 import au.ellie.hyui.builders.*;
+import au.ellie.hyui.events.SlotMouseDragCompletedEventData;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
@@ -50,7 +51,7 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
                     return CompletableFuture.runAsync(() -> {
                         PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
                         if (playerRef != null) {
-                            openHtmlTestGui(playerRef, store);
+                            openHtmlTestGui2(playerRef, store);
                         }
                     }, world);
                 } else {
@@ -254,6 +255,41 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
             HyUIPlugin.getLog().logInfo(s);
         }
     }
+
+    private void openHtmlTestGui2(PlayerRef playerRef, Store<EntityStore> store) {
+        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+            return;
+        }
+        
+        PageBuilder builder = PageBuilder.detachedPage()
+                .loadHtml("Pages/ItemGridTest.html")
+                .addEventListener("itemgrid", CustomUIEventBindingType.SlotMouseDragCompleted, (data, ctx) -> {
+                    var eventData = (SlotMouseDragCompletedEventData)data;
+                    playerRef.sendMessage(Message.raw("Mouse drag completed on item grid: " + eventData.getSlotIndex()));
+                    playerRef.sendMessage(Message.raw("Mouse drag completed on item grid: " + eventData.getItemStackId()));
+                })
+                .addEventListener("test", CustomUIEventBindingType.Activating, (_, context) -> {
+                    var a = context.getValue("price-input", Double.class);
+                    a.ifPresent(aDouble -> HyUIPlugin.getLog().logInfo("Price input is: " + aDouble));
+                })
+                .withLifetime(CustomPageLifetime.CanDismiss);
+        
+        for (CustomUIEventBindingType typeName : CustomUIEventBindingType.values()) {
+            builder.addEventListener("itemgrid", typeName, (data, ctx) -> {
+                playerRef.sendMessage(Message.raw("Event triggered: " + typeName.name()));
+            });
+        }
+        for (CustomUIEventBindingType typeName : CustomUIEventBindingType.values()) {
+            builder.addEventListener("itemslot", typeName, (data, ctx) -> {
+                playerRef.sendMessage(Message.raw("Event triggered: " + typeName.name()));
+            });
+        }
+        builder.open(playerRef, store);
+        for (String s : builder.getCommandLog()) {
+            HyUIPlugin.getLog().logInfo(s);
+        }
+    }
+
 
     private void openTestGuiFromScratch(PlayerRef playerRef, Store<EntityStore> store) {
         if (!HyUIPluginLogger.LOGGING_ENABLED) {
