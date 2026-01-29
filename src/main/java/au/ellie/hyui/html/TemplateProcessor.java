@@ -57,6 +57,7 @@ public class TemplateProcessor {
     private static final String IF_START = "{{#if";
     private static final String IF_END = "{{/if}}";
     private static final String ELSE_TAG = "{{else}}";
+    private static final int MAX_COMPONENT_DEPTH = 20;
 
     private final Map<String, Object> variables = new HashMap<>();
     private final Map<String, String> components = new HashMap<>();
@@ -148,7 +149,7 @@ public class TemplateProcessor {
      * @return Processed HTML string
      */
     public String process(String template) {
-        return processTemplate(template, new HashMap<>(variables));
+        return processTemplate(template, new HashMap<>(variables), 0);
     }
 
     /**
@@ -171,28 +172,28 @@ public class TemplateProcessor {
             }
             return hasElement(context, name) ? Optional.of(NULL_SENTINEL) : Optional.empty();
         };
-        this.preferDynamicValues = true;
+            this.preferDynamicValues = true;
         try {
-            return processTemplate(template, new HashMap<>(variables));
+            return processTemplate(template, new HashMap<>(variables), 0);
         } finally {
             this.valueResolver = previousResolver;
             this.preferDynamicValues = previousPreferDynamic;
         }
     }
 
-    private String processTemplate(String template, Map<String, Object> scope) {
+    private String processTemplate(String template, Map<String, Object> scope, int componentDepth) {
         String result = template;
 
         // Process control structures first so false branches aren't expanded.
-        result = processEachBlocks(result, scope);
-        result = processIfBlocks(result, scope);
+        result = processEachBlocks(result, scope, componentDepth);
+        result = processIfBlocks(result, scope, componentDepth);
 
         // Expand components with the current scope.
-        result = processComponents(result, scope);
+        result = processComponents(result, scope, componentDepth);
 
         // Process control structures again for blocks inside component templates.
-        result = processEachBlocks(result, scope);
-        result = processIfBlocks(result, scope);
+        result = processEachBlocks(result, scope, componentDepth);
+        result = processIfBlocks(result, scope, componentDepth);
 
         // Then process variables.
         result = processVariables(result, scope);
@@ -230,7 +231,7 @@ public class TemplateProcessor {
         return result.toString();
     }
 
-    private String processEachBlocks(String template, Map<String, Object> scope) {
+    private String processEachBlocks(String template, Map<String, Object> scope, int componentDepth) {
         StringBuilder result = new StringBuilder();
         int index = 0;
 
@@ -264,7 +265,7 @@ public class TemplateProcessor {
                 Map<String, Object> childScope = new HashMap<>(scope);
                 childScope.putAll(extractModelVariables(item));
                 childScope.put("item", item);
-                result.append(processTemplate(inner, childScope));
+                result.append(processTemplate(inner, childScope, componentDepth));
             }
 
             index = end + EACH_END.length();
@@ -273,7 +274,7 @@ public class TemplateProcessor {
         return result.toString();
     }
 
-    private String processIfBlocks(String template, Map<String, Object> scope) {
+    private String processIfBlocks(String template, Map<String, Object> scope, int componentDepth) {
         StringBuilder result = new StringBuilder();
         int index = 0;
 
@@ -312,7 +313,7 @@ public class TemplateProcessor {
 
             boolean conditionResult = evaluateCondition(conditionName, scope);
             String chosen = conditionResult ? trueBlock : falseBlock;
-            result.append(processTemplate(chosen, scope));
+            result.append(processTemplate(chosen, scope, componentDepth));
 
             index = end + IF_END.length();
         }
@@ -320,7 +321,7 @@ public class TemplateProcessor {
         return result.toString();
     }
 
-    private String processComponents(String template, Map<String, Object> scope) {
+    private String processComponents(String template, Map<String, Object> scope, int componentDepth) {
         StringBuilder result = new StringBuilder();
         int index = 0;
 
@@ -388,7 +389,12 @@ public class TemplateProcessor {
             }
 
             HyUIPlugin.getLog().logFinest("Including component: @" + componentName);
-            result.append(componentHtml);
+            if (componentDepth >= MAX_COMPONENT_DEPTH) {
+                HyUIPlugin.getLog().logFinest("Component recursion limit hit for @" + componentName);
+                result.append("<!-- Component recursion limit hit for: ").append(componentName).append(" -->");
+            } else {
+                result.append(processTemplate(componentHtml, scope, componentDepth + 1));
+            }
             index = cursor + 2;
         }
 

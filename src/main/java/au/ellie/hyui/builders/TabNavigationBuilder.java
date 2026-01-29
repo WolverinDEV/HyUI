@@ -300,7 +300,7 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
         }
         
         // TODO Proper hash check on objects.
-        boolean tabButtonsMissing = (tabButtons.isEmpty() && children.isEmpty()) || tabButtons.size() != children.size();
+        boolean tabButtonsMissing = tabsVersion > lastBuiltTabsVersion || (tabButtons.isEmpty() && children.isEmpty()) || tabButtons.size() != children.size();
         if (tabButtonsMissing) {
             clearTabButtons();
         } else {

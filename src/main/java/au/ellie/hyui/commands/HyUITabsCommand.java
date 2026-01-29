@@ -73,6 +73,7 @@ public class HyUITabsCommand extends AbstractAsyncCommand {
 
                         <div id="materials-content" class="tab-content" data-hyui-tab-id="materials">
                             <p>Material stacks and salvage.</p>
+                            {{@myComponent}}
                         </div>
 
                         {{#if isAdmin}}
@@ -88,8 +89,22 @@ public class HyUITabsCommand extends AbstractAsyncCommand {
             """;
 
         TemplateProcessor template = new TemplateProcessor()
-                .setVariable("isAdmin", false);
+                .setVariable("isAdmin", false)
+                .registerComponent("mySubComponent",
+                        """
+                        <p style="padding-top: 20;">Hello subComponent!</p>
+                        """)
+                .registerComponent("myComponent",
+                        """
+                        <div>
+                            {{@mySubComponent}}
+                        </div>
+                        """);
 
+        PageBuilder.detachedPage()
+                .withLifetime(CustomPageLifetime.CanDismiss)
+                .fromHtml(html)
+                .open(playerRef, store);
         PageBuilder builder = PageBuilder.pageForPlayer(playerRef)
                 .fromTemplate(html, template)
                 .enableRuntimeTemplateUpdates(true)

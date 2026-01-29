@@ -55,6 +55,34 @@ PageBuilder.pageForPlayer(playerRef)
     .open(store);
 ```
 
+##### Nested Components With TemplateProcessor
+
+You can compose components inside other components using the same `TemplateProcessor` instance.
+
+```java
+String html = new TemplateProcessor()
+    .registerComponent("mySubComponent",
+        """
+        <p>Hello subComponent!</p>
+        """)
+    .registerComponent("myComponent",
+        """
+        <div>
+            {{@mySubComponent}}
+        </div>
+        """)
+    .process("""
+        <div class="container">
+            {{@myComponent}}
+        </div>
+        """);
+
+PageBuilder.detachedPage()
+    .withLifetime(CustomPageLifetime.CanDismiss)
+    .fromHtml(html)
+    .open(playerRef, store);
+```
+
 #### Event Listeners and UIContext
 
 When you register an event listener, the callback receives a `UIContext` as the second argument. This context provides a way to interact with the current state of the UI without needing to keep a direct reference to the page.
