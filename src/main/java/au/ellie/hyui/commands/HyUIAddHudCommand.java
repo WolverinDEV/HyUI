@@ -4,7 +4,6 @@ import au.ellie.hyui.builders.HudBuilder;
 import au.ellie.hyui.builders.HyUIHud;
 import au.ellie.hyui.builders.LabelBuilder;
 import au.ellie.hyui.HyUIPluginLogger;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.GameMode;
@@ -30,7 +29,7 @@ public class HyUIAddHudCommand extends AbstractAsyncCommand {
 
     public HyUIAddHudCommand() {
         super("add", "Adds a new HTML HUD");
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
         this.setPermissionGroup(GameMode.Adventure);
@@ -39,7 +38,7 @@ public class HyUIAddHudCommand extends AbstractAsyncCommand {
     @NonNullDecl
     @Override
     protected CompletableFuture<Void> executeAsync(CommandContext commandContext) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return CompletableFuture.completedFuture(null);
         }
         var sender = commandContext.sender();
@@ -64,7 +63,7 @@ public class HyUIAddHudCommand extends AbstractAsyncCommand {
     }
 
     private void addHud(PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
         String html = """

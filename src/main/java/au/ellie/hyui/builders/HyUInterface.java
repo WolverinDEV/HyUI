@@ -69,10 +69,10 @@ public abstract class HyUInterface implements UIContext {
 
     @Override
     public Optional<Object> getValue(String id) {
-        if (HyUIPluginLogger.LOGGING_ENABLED) {
-            HyUIPlugin.getLog().logInfo("Retrieving value for element: " + id);
+        if (HyUIPluginLogger.IS_DEV) {
+            HyUIPlugin.getLog().logFinest("Retrieving value for element: " + id);
             for (var s : elementValues.entrySet()) {
-                HyUIPlugin.getLog().logInfo("Element: " + s.getKey() + ", Value: " + s.getValue());
+                HyUIPlugin.getLog().logFinest("Element: " + s.getKey() + ", Value: " + s.getValue());
             }
         }
         return Optional.ofNullable(elementValues.get(id));
@@ -98,22 +98,22 @@ public abstract class HyUInterface implements UIContext {
                       @Nonnull UIEventBuilder uiEventBuilder,
                       @Nonnull Store<EntityStore> store,
                       boolean updateOnly) {
-        HyUIPlugin.getLog().logInfo("REBUILD: HyUInterface build updateOnly=" + updateOnly);
-        HyUIPlugin.getLog().logInfo("Building HyUInterface" + (uiFile != null ? " from file: " + uiFile : ""));
+        HyUIPlugin.getLog().logFinest("REBUILD: HyUInterface build updateOnly=" + updateOnly);
+        HyUIPlugin.getLog().logFinest("Building HyUInterface" + (uiFile != null ? " from file: " + uiFile : ""));
 
         LoggingUICommandBuilder loggingBuilder = new LoggingUICommandBuilder();
 
         refreshTemplate(this);
 
         if (!updateOnly && uiFile != null) {
-            if (HyUIPluginLogger.LOGGING_ENABLED)
+            if (HyUIPluginLogger.IS_DEV)
                 loggingBuilder.append(uiFile);
             uiCommandBuilder.append(uiFile);
         }
 
         if (editCallbacks != null) {
             for (Consumer<UICommandBuilder> callback : editCallbacks) {
-                if (HyUIPluginLogger.LOGGING_ENABLED)
+                if (HyUIPluginLogger.IS_DEV)
                     callback.accept(loggingBuilder);
                 callback.accept(uiCommandBuilder);
             }
@@ -127,7 +127,7 @@ public abstract class HyUInterface implements UIContext {
             if (!updateOnly) {
                 captureInitialValues(element);
             }
-            if (HyUIPluginLogger.LOGGING_ENABLED) {
+            if (HyUIPluginLogger.IS_DEV) {
                 if (updateOnly) {
                     element.buildUpdates(loggingBuilder, new UIEventBuilder());
                 } else {
@@ -144,7 +144,7 @@ public abstract class HyUInterface implements UIContext {
         if (!updateOnly) {
             refreshTemplate(this);
             for (UIElementBuilder<?> element : elements) {
-                if (HyUIPluginLogger.LOGGING_ENABLED) {
+                if (HyUIPluginLogger.IS_DEV) {
                     element.buildUpdates(loggingBuilder, new UIEventBuilder());
                 }
                 element.buildUpdates(uiCommandBuilder, uiEventBuilder);
@@ -160,22 +160,22 @@ public abstract class HyUInterface implements UIContext {
     }
 
     public void buildFromCommandBuilder(@Nonnull UICommandBuilder uiCommandBuilder, boolean updateOnly) {
-        HyUIPlugin.getLog().logInfo("REBUILD: HyUInterface buildFromCommandBuilder updateOnly=" + updateOnly);
-        HyUIPlugin.getLog().logInfo("Building HyUInterface " + (uiFile != null ? " from file: " + uiFile : ""));
+        HyUIPlugin.getLog().logFinest("REBUILD: HyUInterface buildFromCommandBuilder updateOnly=" + updateOnly);
+        HyUIPlugin.getLog().logFinest("Building HyUInterface " + (uiFile != null ? " from file: " + uiFile : ""));
 
         LoggingUICommandBuilder loggingBuilder = new LoggingUICommandBuilder();
 
         refreshTemplate(this);
 
         if (!updateOnly && uiFile != null) {
-            if (HyUIPluginLogger.LOGGING_ENABLED)
+            if (HyUIPluginLogger.IS_DEV)
                 loggingBuilder.append(uiFile);
             uiCommandBuilder.append(uiFile);
         }
 
         if (editCallbacks != null) {
             for (Consumer<UICommandBuilder> callback : editCallbacks) {
-                if (HyUIPluginLogger.LOGGING_ENABLED)
+                if (HyUIPluginLogger.IS_DEV)
                     callback.accept(loggingBuilder);
                 callback.accept(uiCommandBuilder);
             }
@@ -189,7 +189,7 @@ public abstract class HyUInterface implements UIContext {
             if (!updateOnly) {
                 captureInitialValues(element);
             }
-            if (HyUIPluginLogger.LOGGING_ENABLED) {
+            if (HyUIPluginLogger.IS_DEV) {
                 if (updateOnly) {
                     element.buildUpdates(loggingBuilder, null);
                 } else {
@@ -206,7 +206,7 @@ public abstract class HyUInterface implements UIContext {
         if (!updateOnly) {
             refreshTemplate(this);
             for (UIElementBuilder<?> element : elements) {
-                if (HyUIPluginLogger.LOGGING_ENABLED) {
+                if (HyUIPluginLogger.IS_DEV) {
                     element.buildUpdates(loggingBuilder, null);
                 }
                 element.buildUpdates(uiCommandBuilder, null);
@@ -232,9 +232,9 @@ public abstract class HyUInterface implements UIContext {
     }
 
     protected void handleDataEventInternal(DynamicPageData data, UIContext context) {
-        HyUIPlugin.getLog().logInfo("Received DataEvent: Action=" + data.action);
+        HyUIPlugin.getLog().logFinest("Received DataEvent: Action=" + data.action);
         data.values.forEach((key, value) -> {
-            HyUIPlugin.getLog().logInfo("  Property: " + key + " = " + value);
+            HyUIPlugin.getLog().logFinest("  Property: " + key + " = " + value);
         });
 
         for (UIElementBuilder<?> element : elements) {
@@ -406,7 +406,7 @@ public abstract class HyUInterface implements UIContext {
 
     private void releaseDynamicImagesRecursive(UIElementBuilder<?> element, UUID playerUuid) {
         if (element instanceof DynamicImageBuilder) {
-            HyUIPlugin.getLog().logInfo("Releasing image: " + element.getEffectiveId());
+            HyUIPlugin.getLog().logFinest("Releasing image: " + element.getEffectiveId());
             ((DynamicImageBuilder) element).releaseSlotForPlayer(playerUuid);
         }
         for (UIElementBuilder<?> child : element.children) {
@@ -421,7 +421,7 @@ public abstract class HyUInterface implements UIContext {
         if (hasBuilt && dirtyValueIds.isEmpty()) {
             //return;
         }
-        HyUIPlugin.getLog().logInfo("REBUILD: Template refresh");
+        HyUIPlugin.getLog().logFinest("REBUILD: Template refresh");
         HtmlParser parser = new HtmlParser();
         String processedHtml = templateProcessor.process(templateHtml, context);
         List<UIElementBuilder<?>> updatedElements = parser.parse(processedHtml);

@@ -1,7 +1,6 @@
 package au.ellie.hyui.elements;
 
 import au.ellie.hyui.HyUIPlugin;
-import au.ellie.hyui.builders.HyUIPatchStyle;
 import com.hypixel.hytale.server.core.ui.Value;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 
@@ -53,7 +52,7 @@ public interface ScrollbarStyleSupported<T extends ScrollbarStyleSupported<T>> {
         String reference = getScrollbarStyleReference();
         String document = getScrollbarStyleDocument();
         if (reference != null && document != null && selector != null) {
-            HyUIPlugin.getLog().logInfo("Setting ScrollbarStyle reference for " + selector + " from " + document + ": " + reference);
+            HyUIPlugin.getLog().logFinest("Setting ScrollbarStyle reference for " + selector + " from " + document + ": " + reference);
             commands.set(selector + ".ScrollbarStyle", Value.ref(document, reference));
         }
     }

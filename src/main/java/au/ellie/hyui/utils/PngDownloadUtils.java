@@ -22,10 +22,10 @@ public final class PngDownloadUtils {
         long now = System.currentTimeMillis();
         CacheEntry cached = getCache(normalizedUrl, now);
         if (cached != null) {
-            HyUIPlugin.getLog().logInfo("PNG cache hit: " + normalizedUrl);
+            HyUIPlugin.getLog().logFinest("PNG cache hit: " + normalizedUrl);
             return cached.bytes();
         }
-        HyUIPlugin.getLog().logInfo("Downloading PNG: " + normalizedUrl);
+        HyUIPlugin.getLog().logFinest("Downloading PNG: " + normalizedUrl);
         HttpRequest request = HttpRequest.newBuilder(URI.create(normalizedUrl))
                 .GET()
                 .header("Accept", "image/png")
@@ -35,7 +35,7 @@ public final class PngDownloadUtils {
             throw new IOException("Failed to download PNG. HTTP status: " + response.statusCode());
         }
         putCache(normalizedUrl, response.body(), now);
-        HyUIPlugin.getLog().logInfo("Downloaded PNG bytes: " + response.body().length);
+        HyUIPlugin.getLog().logFinest("Downloaded PNG bytes: " + response.body().length);
         return response.body();
     }
 

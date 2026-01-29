@@ -146,6 +146,29 @@ public class ItemGridBuilder extends UIElementBuilder<ItemGridBuilder> implement
         return Collections.unmodifiableList(this.slots);
     }
     
+    public ItemGridBuilder updateSlot(ItemGridSlot updatedSlot, Integer index) {
+        if (updatedSlot == null || index == null || index < 0 || index >= this.slots.size()) {
+            return this;
+        }
+        this.slots.set(index, updatedSlot);
+        return this;
+    }
+    
+    public ItemGridBuilder removeSlot(Integer index) {
+        if (index == null || index < 0 || index >= this.slots.size()) {
+            return this;
+        }
+        this.slots.remove(index.intValue());
+        return this;
+    }
+    
+    public ItemGridSlot getSlot(Integer index) {
+        if (index == null || index < 0 || index >= this.slots.size()) {
+            return null;
+        }
+        return this.slots.get(index);
+    }
+    
     @Override
     protected boolean supportsStyling() {
         return true;
@@ -186,34 +209,34 @@ public class ItemGridBuilder extends UIElementBuilder<ItemGridBuilder> implement
         applyScrollbarStyle(commands, selector);
         
         if (backgroundMode != null) {
-            HyUIPlugin.getLog().logInfo("Setting BackgroundMode: " + backgroundMode + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting BackgroundMode: " + backgroundMode + " for " + selector);
             commands.set(selector + ".BackgroundMode", backgroundMode);
         }
         if (renderItemQualityBackground != null) {
-            HyUIPlugin.getLog().logInfo("Setting RenderItemQualityBackground: " + renderItemQualityBackground + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting RenderItemQualityBackground: " + renderItemQualityBackground + " for " + selector);
             commands.set(selector + ".RenderItemQualityBackground", renderItemQualityBackground);
         }
         if (areItemsDraggable != null) {
-            HyUIPlugin.getLog().logInfo("Setting AreItemsDraggable: " + areItemsDraggable + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting AreItemsDraggable: " + areItemsDraggable + " for " + selector);
             commands.set(selector + ".AreItemsDraggable", areItemsDraggable);
             if (areItemsDraggable) {
                 setAllSlotsActivatable();
             }
         }
         if (keepScrollPosition != null) {
-            HyUIPlugin.getLog().logInfo("Setting KeepScrollPosition: " + keepScrollPosition + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting KeepScrollPosition: " + keepScrollPosition + " for " + selector);
             commands.set(selector + ".KeepScrollPosition", keepScrollPosition);
         }
         if (showScrollbar != null) {
-            HyUIPlugin.getLog().logInfo("Setting ShowScrollbar: " + showScrollbar + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting ShowScrollbar: " + showScrollbar + " for " + selector);
             commands.set(selector + ".ShowScrollbar", showScrollbar);
         }
         if (slotsPerRow != null) {
-            HyUIPlugin.getLog().logInfo("Setting SlotsPerRow: " + slotsPerRow + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting SlotsPerRow: " + slotsPerRow + " for " + selector);
             commands.set(selector + ".SlotsPerRow", slotsPerRow);
         }
         if (!slots.isEmpty()) {
-            HyUIPlugin.getLog().logInfo("Setting Slots for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Slots for " + selector);
             commands.set(selector + ".Slots", slots);
         }
         
@@ -236,7 +259,7 @@ public class ItemGridBuilder extends UIElementBuilder<ItemGridBuilder> implement
                 )
                 return;
             String eventId = getEffectiveId();
-            HyUIPlugin.getLog().logInfo("Adding " + type.name());
+            HyUIPlugin.getLog().logFinest("Adding " + type.name());
             events.addEventBinding(type, selector,
                     EventData.of("Action", type.name())
                             .append("Target", eventId),
@@ -252,7 +275,7 @@ public class ItemGridBuilder extends UIElementBuilder<ItemGridBuilder> implement
             itemStackField.setAccessible(true);
             available = true;
         } catch (NoSuchFieldException e) {
-            HyUIPlugin.getLog().logInfo("ItemGridSlot.itemStack field not found; empty slots will still be activatable.");
+            HyUIPlugin.getLog().logFinest("ItemGridSlot.itemStack field not found; empty slots will still be activatable.");
         }
         ITEM_STACK_FIELD = itemStackField;
         ITEM_STACK_FIELD_AVAILABLE = available;
@@ -267,14 +290,14 @@ public class ItemGridBuilder extends UIElementBuilder<ItemGridBuilder> implement
     }
 
     // Might need it one day.
-    private static ItemStack getItemStack(ItemGridSlot slot) {
+    public static ItemStack getItemStack(ItemGridSlot slot) {
         if (!ITEM_STACK_FIELD_AVAILABLE) {
             return null;
         }
         try {
             return (ItemStack)ITEM_STACK_FIELD.get(slot);
         } catch (IllegalAccessException e) {
-            HyUIPlugin.getLog().logInfo("Unable to access ItemGridSlot.itemStack.");
+            HyUIPlugin.getLog().logFinest("Unable to access ItemGridSlot.itemStack.");
             return null;
         }
     }

@@ -149,12 +149,12 @@ public class LabelBuilder extends UIElementBuilder<LabelBuilder> implements Back
         applyBackground(commands, selector);
 
         if (text != null) {
-            HyUIPlugin.getLog().logInfo("Setting Text: " + text + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Text: " + text + " for " + selector);
             commands.set(selector + ".Text", text);
         }
 
         if (hyUIStyle == null && style != null) {
-            HyUIPlugin.getLog().logInfo("Setting Raw Style: " + style + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Raw Style: " + style + " for " + selector);
             commands.set(selector + ".Style", style);
         }
     }

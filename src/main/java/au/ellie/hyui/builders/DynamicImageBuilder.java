@@ -149,9 +149,9 @@ public class DynamicImageBuilder extends UIElementBuilder<DynamicImageBuilder>
         if (selector == null) return;
 
         if (imageUrl != null && !imageUrl.isBlank()) {
-            HyUIPlugin.getLog().logInfo("Building dynamic image with URL: " + imageUrl);
+            HyUIPlugin.getLog().logFinest("Building dynamic image with URL: " + imageUrl);
         } else if (this.background != null) {
-            HyUIPlugin.getLog().logInfo("Building dynamic image from path: " + this.background.getTexturePath());
+            HyUIPlugin.getLog().logFinest("Building dynamic image from path: " + this.background.getTexturePath());
         }
         applyLayoutMode(commands, selector);
         applyBackground(commands, selector);

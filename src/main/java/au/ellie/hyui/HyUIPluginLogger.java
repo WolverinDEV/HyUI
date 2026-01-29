@@ -6,15 +6,13 @@ public class HyUIPluginLogger {
     
     private final HytaleLogger internalLogger = HytaleLogger.forEnclosingClass();
     
-    public static final boolean LOGGING_ENABLED = false;
-    
+    public static final boolean IS_DEV = "true".equals(System.getenv("HYUI_DEV"));
+
     public HyUIPluginLogger() {
         
     }
     
-    public void logInfo(String message) {
-        if (LOGGING_ENABLED) {
-            internalLogger.atInfo().log(message);
-        }
+    public void logFinest(String message) {
+        internalLogger.atFinest().log(message);
     }
 }

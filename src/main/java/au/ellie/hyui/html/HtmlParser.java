@@ -3,7 +3,6 @@ package au.ellie.hyui.html;
 import au.ellie.hyui.HyUIPlugin;
 import au.ellie.hyui.builders.LabelBuilder;
 import au.ellie.hyui.builders.InterfaceBuilder;
-import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.builders.UIElementBuilder;
 import au.ellie.hyui.html.handlers.*;
 import org.jsoup.Jsoup;
@@ -93,11 +92,11 @@ public class HtmlParser {
         String processedHtml = html;
         if (templateProcessor != null) {
             processedHtml = templateProcessor.process(html);
-            HyUIPlugin.getLog().logInfo("Processed template: " + processedHtml);
+            HyUIPlugin.getLog().logFinest("Processed template: " + processedHtml);
         }
         Document doc = Jsoup.parseBodyFragment(processedHtml);
         new CssPreprocessor().process(doc);
-        HyUIPlugin.getLog().logInfo("Document elements after preprocessing: " + doc.body().html());
+        HyUIPlugin.getLog().logFinest("Document elements after preprocessing: " + doc.body().html());
         return parseChildren(doc.body());
     }
 
@@ -110,14 +109,14 @@ public class HtmlParser {
     public List<UIElementBuilder<?>> parseChildren(Element parent) {
         List<UIElementBuilder<?>> builders = new ArrayList<>();
         for (Node child : parent.childNodes()) {
-            HyUIPlugin.getLog().logInfo("Parsing child node: " + child.nodeName());
+            HyUIPlugin.getLog().logFinest("Parsing child node: " + child.nodeName());
             
             if (child instanceof Element) {
-                HyUIPlugin.getLog().logInfo("Parsing ELEMENT node: " + child.nodeName());
+                HyUIPlugin.getLog().logFinest("Parsing ELEMENT node: " + child.nodeName());
                 
                 UIElementBuilder<?> builder = handleElement((Element) child);
                 if (builder != null) {
-                    HyUIPlugin.getLog().logInfo("Parsed element: " + builder.getClass().getSimpleName());
+                    HyUIPlugin.getLog().logFinest("Parsed element: " + builder.getClass().getSimpleName());
                     builders.add(builder);
                 }
             } else if (child instanceof TextNode) {

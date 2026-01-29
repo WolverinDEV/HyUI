@@ -298,29 +298,29 @@ public class ButtonBuilder extends UIElementBuilder<ButtonBuilder> implements
         applyBackground(commands, selector);
 
         if (text != null && isTextButtonElement()) {
-            HyUIPlugin.getLog().logInfo("Setting Text: " + text + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Text: " + text + " for " + selector);
             commands.set(selector + ".Text", text);
         }
 
         if (disabled != null && !isBackButton()) {
-            HyUIPlugin.getLog().logInfo("Setting Disabled: " + disabled + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Disabled: " + disabled + " for " + selector);
             commands.set(selector + ".Disabled", disabled);
         }
 
         if (overscroll != null && isTextButtonElement()) {
-            HyUIPlugin.getLog().logInfo("Setting Overscroll: " + overscroll + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Overscroll: " + overscroll + " for " + selector);
             commands.set(selector + ".Overscroll", overscroll);
         }
 
         if (hyUIStyle == null && style != null && !isBackButton()) {
-            HyUIPlugin.getLog().logInfo("Setting Style: " + style + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Style: " + style + " for " + selector);
             commands.set(selector + ".Style", style);
         }
 
         listeners.forEach(listener -> {
             if (listener.type() == CustomUIEventBindingType.Activating) {
                 String eventId = getEffectiveId();
-                HyUIPlugin.getLog().logInfo("Adding Activating event binding: " + eventId + " for " + selector);
+                HyUIPlugin.getLog().logFinest("Adding Activating event binding: " + eventId + " for " + selector);
                 events.addEventBinding(CustomUIEventBindingType.Activating, selector, 
                         EventData.of("Action", UIEventActions.BUTTON_CLICKED)
                             .append("Target", eventId), 

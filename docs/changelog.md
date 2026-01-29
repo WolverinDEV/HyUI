@@ -1,5 +1,12 @@
 ### HyUI Changelog
 
+#### 0.5.8 - 29 Jan 2026
+- Rework internally how logging occurs, it is now enabled in releases, at Finest level only.
+- Add helper methods to ItemGridBuilder to update/remove/get all slots, the tutorial has also been updated to showcase this.
+- Add support for replacing button builders for tab navigation - this complements the existing selected/unselected styling. Use TabNavigationBuilder.addTab(id, label, contentId, buttonBuilder) , this means every tab's button can have its own builder. By default, tabs are built with secondary/primary button builders. You can of course update/remove tabs as well.
+- Add support for CustomButtonBuilder for tab navigation.
+- Add [tutorial](https://hyui.gitbook.io/docs/tutorials/tutorial-tab-navigation) for Tab Navigation.
+
 #### 0.5.7 - 29 Jan 2026
 - Add events for ItemGrid. See tutorial: [here](https://hyui.gitbook.io/docs/tutorial-working-with-item-grids). 
 - Add Multi-Line Text Field (textarea). 

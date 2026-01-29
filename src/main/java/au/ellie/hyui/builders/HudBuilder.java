@@ -2,7 +2,6 @@ package au.ellie.hyui.builders;
 
 import au.ellie.hyui.HyUIPlugin;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
@@ -103,7 +102,7 @@ public class HudBuilder extends InterfaceBuilder<HudBuilder> {
         this.lastHud = new HyUIHud(name, playerRefParam, uiFile, getTopLevelElements(), editCallbacks, templateHtml, templateProcessor, runtimeTemplateUpdatesEnabled);
         this.lastHud.setRefreshRateMs(refreshRateMs);
         this.lastHud.setRefreshListener(refreshListener);
-        HyUIPlugin.getLog().logInfo("Adding to a MultiHud: " + name);
+        HyUIPlugin.getLog().logFinest("Adding to a MultiHud: " + name);
 
         // Show it.
         this.lastHud.add();

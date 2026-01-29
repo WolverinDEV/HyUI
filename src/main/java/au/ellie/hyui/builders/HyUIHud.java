@@ -12,8 +12,6 @@ import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
@@ -61,17 +59,17 @@ public class HyUIHud extends CustomUIHud implements UIContext {
     
     private void checkRefreshes() {
         if (isHidden) {
-            HyUIPlugin.getLog().logInfo("Hidden HUD. Not refreshing.");
+            HyUIPlugin.getLog().logFinest("Hidden HUD. Not refreshing.");
             return;
         }
         
         PlayerRef playerRef = getPlayerRef();
         if (!playerRef.isValid()) {
-            HyUIPlugin.getLog().logInfo("Player is invalid, cancelling refresh task for HUD.");
+            HyUIPlugin.getLog().logFinest("Player is invalid, cancelling refresh task for HUD.");
             
             // Player is no longer valid, cancel task and cleanup.
             if (refreshTask != null) {
-                HyUIPlugin.getLog().logInfo("Player is invalid, cancelling refresh task for HUD.");
+                HyUIPlugin.getLog().logFinest("Player is invalid, cancelling refresh task for HUD.");
                 refreshTask.cancel(false);
             }
             return;
@@ -153,7 +151,7 @@ public class HyUIHud extends CustomUIHud implements UIContext {
 
             MultiHudWrapper.hideCustomHud(player, getPlayerRef(), this.name);
         });
-        HyUIPlugin.getLog().logInfo("HUD removed: " + this.name);
+        HyUIPlugin.getLog().logFinest("HUD removed: " + this.name);
         refreshTask.cancel(false);
     }
 
@@ -169,7 +167,7 @@ public class HyUIHud extends CustomUIHud implements UIContext {
         if (player == null) return;
 
         MultiHudWrapper.hideCustomHud(player, getPlayerRef(), this.name);
-        HyUIPlugin.getLog().logInfo("HUD removed: " + this.name);
+        HyUIPlugin.getLog().logFinest("HUD removed: " + this.name);
         refreshTask.cancel(false);
     }
 
@@ -183,7 +181,7 @@ public class HyUIHud extends CustomUIHud implements UIContext {
         if (refreshTask != null && !refreshTask.isCancelled()) {
             refreshTask.cancel(false);
         }
-        HyUIPlugin.getLog().logInfo("HUD added: " + this.name);
+        HyUIPlugin.getLog().logFinest("HUD added: " + this.name);
         startRefreshTask();
     }
     
@@ -200,7 +198,7 @@ public class HyUIHud extends CustomUIHud implements UIContext {
         if (refreshTask != null && !refreshTask.isCancelled()) {
             refreshTask.cancel(false);
         }
-        HyUIPlugin.getLog().logInfo("HUD added: " + this.name);
+        HyUIPlugin.getLog().logFinest("HUD added: " + this.name);
         startRefreshTask();
     }
 
@@ -300,7 +298,7 @@ public class HyUIHud extends CustomUIHud implements UIContext {
             break;
         }
        
-        HyUIPlugin.getLog().logInfo("REDRAW: HUD SET VISIBILITY from single hud");
+        HyUIPlugin.getLog().logFinest("REDRAW: HUD SET VISIBILITY from single hud");
         this.refreshOrRerender(false, unsafe);
         // this.update(false, builder);
         isHidden = !isHidden;

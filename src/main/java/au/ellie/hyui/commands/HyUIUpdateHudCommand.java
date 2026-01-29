@@ -19,7 +19,7 @@ public class HyUIUpdateHudCommand extends AbstractAsyncCommand {
 
     public HyUIUpdateHudCommand() {
         super("update", "Updates the label in the HUD");
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
         this.setPermissionGroup(GameMode.Adventure);
@@ -28,7 +28,7 @@ public class HyUIUpdateHudCommand extends AbstractAsyncCommand {
     @NonNullDecl
     @Override
     protected CompletableFuture<Void> executeAsync(CommandContext commandContext) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return CompletableFuture.completedFuture(null);
         }
         var sender = commandContext.sender();
@@ -46,7 +46,7 @@ public class HyUIUpdateHudCommand extends AbstractAsyncCommand {
     }
 
     private void updateHuds() {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
         long millis = System.currentTimeMillis();

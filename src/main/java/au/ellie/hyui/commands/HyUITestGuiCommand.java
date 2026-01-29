@@ -6,7 +6,6 @@ import au.ellie.hyui.builders.*;
 import au.ellie.hyui.events.SlotMouseDragCompletedEventData;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
@@ -30,7 +29,7 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
 
     public HyUITestGuiCommand() {
         super("t", "Opens the HyUI Test GUI");
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
         this.setPermissionGroup(GameMode.Adventure);
@@ -39,10 +38,10 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
     @NonNullDecl
     @Override
     protected CompletableFuture<Void> executeAsync(CommandContext commandContext) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return CompletableFuture.completedFuture(null);
         }
-        if (HyUIPluginLogger.LOGGING_ENABLED) {
+        if (HyUIPluginLogger.IS_DEV) {
             var sender = commandContext.sender();
             if (sender instanceof Player player) {
                 player.getWorldMapTracker().tick(0);
@@ -68,7 +67,7 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
         }
     }
     private void openTestGuiMinimal(PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
         new PageBuilder(playerRef)
@@ -76,7 +75,7 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
                 .open(store);
     }
     private void openHtmlTestGui(PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
 
@@ -217,10 +216,10 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
                 .addEventListener("btn1", CustomUIEventBindingType.Activating, (data, ctx) -> {
                     playerRef.sendMessage(Message.raw("Button clicked via PageBuilder ID lookup!: " +
                     ctx.getValue("myInput", String.class).orElse("N/A")));
-                    HyUIPlugin.getLog().logInfo("Clicked button.");
+                    HyUIPlugin.getLog().logFinest("Clicked button.");
                     ctx.getById("label", LabelBuilder.class).ifPresent(lb -> { 
                         lb.withText("ClicksA: " + String.valueOf(clicks.incrementAndGet()));
-                        HyUIPlugin.getLog().logInfo("Found label builder.");
+                        HyUIPlugin.getLog().logFinest("Found label builder.");
                         ctx.updatePage(true);
                         /*for (String s : ctx.getCommandLog()) {
                             HyUIPlugin.getLog().logInfo(s);
@@ -230,7 +229,7 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
                     var val = ctx.getValue("myDropdown", String.class).orElse("N/A");
                     playerRef.sendMessage(Message.raw("Dropdown VALUE: " + val));
                     ctx.getById("myDropdown", DropdownBoxBuilder.class).ifPresent(lb -> {
-                        HyUIPlugin.getLog().logInfo("Found Dropdown builder.");
+                        HyUIPlugin.getLog().logFinest("Found Dropdown builder.");
                         var val2 = ctx.getValue("myDropdown", String.class).orElse("N/A");
                         playerRef.sendMessage(Message.raw("Dropdown VALUE: " + val2));
                         // SETTING VALUE
@@ -254,12 +253,12 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
         });*/
         builder.open(playerRef, store);
         for (String s : builder.getCommandLog()) {
-            HyUIPlugin.getLog().logInfo(s);
+            HyUIPlugin.getLog().logFinest(s);
         }
     }
 
     private void openHtmlTestGui2(PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
         
@@ -271,7 +270,7 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
                 })
                 .addEventListener("test", CustomUIEventBindingType.Activating, (_, context) -> {
                     var a = context.getValue("price-input", Double.class);
-                    a.ifPresent(aDouble -> HyUIPlugin.getLog().logInfo("Price input is: " + aDouble));
+                    a.ifPresent(aDouble -> HyUIPlugin.getLog().logFinest("Price input is: " + aDouble));
                 })
                 .withLifetime(CustomPageLifetime.CanDismiss);
         
@@ -291,13 +290,13 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
         }
         builder.open(playerRef, store);
         for (String s : builder.getCommandLog()) {
-            HyUIPlugin.getLog().logInfo(s);
+            HyUIPlugin.getLog().logFinest(s);
         }
     }
 
 
     private void openTestGuiFromScratch(PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
 
@@ -318,7 +317,7 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
 
     }
     private void openTestGui(PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
 
@@ -338,7 +337,7 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
                                 .withId("FirstButton")
                                 .withText("Text Button 1")
                                 .editElementBefore((commandBuilder, elementSelector) -> {
-                                    HyUIPlugin.getLog().logInfo("Before build callback for FirstButton");
+                                    HyUIPlugin.getLog().logFinest("Before build callback for FirstButton");
                                 })
                                 .withTooltipTextSpan(Message.raw("This button has a tooltip now!"))
                                 .withStyle(new HyUIStyle().setTextColor("#00FF00").setFontSize(16))
@@ -354,7 +353,7 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
                                 .withStep(10)
                                 .withValue(51)
                                 .addEventListener(CustomUIEventBindingType.ValueChanged, (value, ctx) -> {
-                                    HyUIPlugin.getLog().logInfo("Slider value changed to: " + value);
+                                    HyUIPlugin.getLog().logFinest("Slider value changed to: " + value);
                                     String text = ctx.getValue("MyTextField", String.class).orElse("N/A");
                                     Integer num = ctx.getValue("Hey", Integer.class).orElse(0);
                                     playerRef.sendMessage(Message.raw("Text Field: " + text + ", Num: " + num));
@@ -363,7 +362,7 @@ public class HyUITestGuiCommand extends AbstractAsyncCommand {
                                 .withId("SecondButton")
                                 .withText("Text Button 2")
                                 .editElementAfter((commandBuilder, elementSelector) -> {
-                                    HyUIPlugin.getLog().logInfo("HEEEEEEEEEEY");
+                                    HyUIPlugin.getLog().logFinest("HEEEEEEEEEEY");
                                     commandBuilder.set(elementSelector + ".Text", "Heyyy");
                                 })
                                 .addEventListener(CustomUIEventBindingType.Activating, (ignored) -> {

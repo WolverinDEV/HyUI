@@ -1,7 +1,6 @@
 package au.ellie.hyui.html;
 
 import au.ellie.hyui.HyUIPlugin;
-import au.ellie.hyui.HyUIPluginLogger;
 import au.ellie.hyui.builders.*;
 import au.ellie.hyui.elements.BackgroundSupported;
 import au.ellie.hyui.elements.LayoutModeSupported;
@@ -68,8 +67,8 @@ public interface TagHandler {
                 if (currentStyle == null) {
                     currentStyle = new HyUIStyle();
                 }
-                HyUIPlugin.getLog().logInfo("Applying hover style: " + parsed.style.toString());
-                HyUIPlugin.getLog().logInfo("Applying style: " + currentStyle.toString());
+                HyUIPlugin.getLog().logFinest("Applying hover style: " + parsed.style.toString());
+                HyUIPlugin.getLog().logFinest("Applying style: " + currentStyle.toString());
                 builder.withStyle(currentStyle.setHoverStyle(parsed.style));
             }
         }
@@ -82,7 +81,7 @@ public interface TagHandler {
                     currentStyle = new HyUIStyle();
                 }
                 for (Map.Entry<String, Object> entry : rawStyles.entrySet()) {
-                    HyUIPlugin.getLog().logInfo("Applying style property: " + entry.getKey() + " with value: " + entry.getValue());
+                    HyUIPlugin.getLog().logFinest("Applying style property: " + entry.getKey() + " with value: " + entry.getValue());
                     currentStyle.set(entry.getKey(), entry.getValue());
                 }
                 builder.withStyle(currentStyle);

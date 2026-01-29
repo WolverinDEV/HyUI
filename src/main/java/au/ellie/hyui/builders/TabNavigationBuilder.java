@@ -28,13 +28,13 @@ import java.util.List;
 public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
         implements LayoutModeSupported<TabNavigationBuilder>, BackgroundSupported<TabNavigationBuilder> {
 
-    public record Tab(String id, String label, String contentId, boolean selected) {
+    public record Tab(String id, String label, String contentId, boolean selected, UIElementBuilder<?> buttonBuilder) {
         public Tab withSelected(boolean selected) {
-            return new Tab(id, label, contentId, selected);
+            return new Tab(id, label, contentId, selected, buttonBuilder);
         }
 
         public Tab withContentId(String contentId) {
-            return new Tab(id, label, contentId, selected);
+            return new Tab(id, label, contentId, selected, buttonBuilder);
         }
     }
 
@@ -45,6 +45,10 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
     private HyUIStyle selectedTabStyle;
     private HyUIStyle unselectedTabStyle;
     private int tabSpacing = 0;
+    private int tabsVersion = 0;
+    private int lastBuiltTabsVersion = -1;
+    private final List<UIElementBuilder<?>> tabButtons = new ArrayList<>();
+    private boolean updateOnlyBuild = false;
 
     public TabNavigationBuilder() {
         super(UIElements.GROUP, "Group");
@@ -68,7 +72,8 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
      * @param label Display text for the tab button
      */
     public TabNavigationBuilder addTab(String id, String label) {
-        tabs.add(new Tab(id, label, null, false));
+        tabs.add(new Tab(id, label, null, false, null));
+        markTabsDirty();
         return this;
     }
 
@@ -80,7 +85,35 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
      * @param contentId ID of the content element to show when selected
      */
     public TabNavigationBuilder addTab(String id, String label, String contentId) {
-        tabs.add(new Tab(id, label, contentId, false));
+        tabs.add(new Tab(id, label, contentId, false, null));
+        markTabsDirty();
+        return this;
+    }
+
+    /**
+     * Adds a tab to the navigation with a custom button builder.
+     *
+     * @param id            Unique identifier for the tab (used in events)
+     * @param label         Display text for the tab button
+     * @param buttonBuilder Custom button builder to extend for this tab
+     */
+    public TabNavigationBuilder addTab(String id, String label, UIElementBuilder<?> buttonBuilder) {
+        tabs.add(new Tab(id, label, null, false, buttonBuilder));
+        markTabsDirty();
+        return this;
+    }
+
+    /**
+     * Adds a tab to the navigation with a linked content element ID and custom button builder.
+     *
+     * @param id            Unique identifier for the tab (used in events)
+     * @param label         Display text for the tab button
+     * @param contentId     ID of the content element to show when selected
+     * @param buttonBuilder Custom button builder to extend for this tab
+     */
+    public TabNavigationBuilder addTab(String id, String label, String contentId, UIElementBuilder<?> buttonBuilder) {
+        tabs.add(new Tab(id, label, contentId, false, buttonBuilder));
+        markTabsDirty();
         return this;
     }
 
@@ -123,6 +156,70 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
         return new ArrayList<>(tabs);
     }
 
+    /**
+     * Gets all tabs.
+     */
+    public List<Tab> getAllTabs() {
+        return getTabs();
+    }
+
+    /**
+     * Gets a tab by its ID.
+     */
+    public Tab getTab(String tabId) {
+        if (tabId == null) {
+            return null;
+        }
+        for (Tab tab : tabs) {
+            if (tab.id().equals(tabId)) {
+                return tab;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Replaces a tab in the list by ID.
+     */
+    public TabNavigationBuilder updateTab(String tabId, Tab updatedTab) {
+        if (tabId == null || updatedTab == null) {
+            return this;
+        }
+        for (int i = 0; i < tabs.size(); i++) {
+            Tab tab = tabs.get(i);
+            if (tab.id().equals(tabId)) {
+                tabs.set(i, updatedTab);
+                if (tabId.equals(selectedTabId) && updatedTab.id() != null) {
+                    selectedTabId = updatedTab.id();
+                }
+                markTabsDirty();
+                return this;
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Removes a tab by its ID.
+     */
+    public TabNavigationBuilder removeTab(String tabId) {
+        if (tabId == null) {
+            return this;
+        }
+        for (int i = 0; i < tabs.size(); i++) {
+            Tab tab = tabs.get(i);
+            if (tab.id().equals(tabId)) {
+                tabs.remove(i);
+                if (tabId.equals(selectedTabId)) {
+                    selectedTabId = tabs.isEmpty() ? null : tabs.get(0).id();
+                }
+                markTabsDirty();
+                return this;
+            }
+        }
+        return this;
+    }
+
     public boolean hasTab(String tabId) {
         if (tabId == null) {
             return false;
@@ -144,6 +241,7 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
             if (tab.id().equals(tabId)) {
                 if (tab.contentId() == null || tab.contentId().isBlank()) {
                     tabs.set(i, tab.withContentId(contentId));
+                    markTabsDirty();
                 }
                 return;
             }
@@ -194,39 +292,59 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
         applyLayoutMode(commands, selector);
         applyBackground(commands, selector);
 
-        if (selectedTabId == null && !tabs.isEmpty()) {
+        if ((selectedTabId == null || !hasTab(selectedTabId)) && !tabs.isEmpty()) {
             selectedTabId = tabs.get(0).id();
+        }
+
+        boolean shouldRebuildButtons = tabsVersion != lastBuiltTabsVersion;
+        if (shouldRebuildButtons) {
+            if (updateOnlyBuild) {
+                return;
+            }
+            clearTabButtons();
+            tabButtonsCreated = false;
         }
 
         // Only create tab buttons once, we're dealing with builders here, not raw set commands.
         if (tabButtonsCreated) return;
         tabButtonsCreated = true;
+        lastBuiltTabsVersion = tabsVersion;
 
         // Create tab buttons as children
         for (int i = 0; i < tabs.size(); i++) {
             Tab tab = tabs.get(i);
             boolean isSelected = tab.id().equals(selectedTabId);
 
-            ButtonBuilder tabButton = ButtonBuilder.secondaryTextButton()
-                    .withId(tab.id())
-                    .withText(tab.label())
-                    .addEventListener(CustomUIEventBindingType.Activating, (_, ctx) -> {
-                        applyTabSelection(ctx, tab.id());
-                        ctx.updatePage(true);
-                    })
-                    .withFlexWeight(1);
+            UIElementBuilder<?> tabButton = tab.buttonBuilder() != null
+                    ? tab.buttonBuilder()
+                    : ButtonBuilder.secondaryTextButton();
 
-            // Apply selected/unselected styling
-            if (isSelected) {
-                tabButton.withStyle(selectedTabStyle != null ? selectedTabStyle : defaultSelectedStyle());
-            } else {
-                tabButton.withStyle(unselectedTabStyle != null ? unselectedTabStyle : defaultUnselectedStyle());
+            tabButton.withId(tab.id());
+            applyTabButtonText(tabButton, tab.label());
+            tabButton.addEventListenerWithContext(CustomUIEventBindingType.Activating, Void.class, (_, ctx) -> {
+                applyTabSelection(ctx, tab.id());
+                ctx.updatePage(true);
+            });
+
+            if (tab.buttonBuilder() == null) {
+                tabButton.withFlexWeight(1);
             }
 
-            this.addChild(tabButton);
+            // Apply selected/unselected styling
+            applyTabButtonStyle(tabButton, isSelected);
 
-            HyUIPlugin.getLog().logInfo("Added tab: " + tab.id() + " (selected: " + isSelected + ")");
+            this.addChild(tabButton);
+            tabButtons.add(tabButton);
+
+            HyUIPlugin.getLog().logFinest("Added tab: " + tab.id() + " (selected: " + isSelected + ")");
         }
+    }
+
+    @Override
+    protected void buildUpdates(UICommandBuilder commands, UIEventBuilder events) {
+        updateOnlyBuild = true;
+        super.buildUpdates(commands, events);
+        updateOnlyBuild = false;
     }
 
     private void applyTabSelection(UIContext ctx, String tabId) {
@@ -260,5 +378,35 @@ public class TabNavigationBuilder extends UIElementBuilder<TabNavigationBuilder>
     public static HyUIStyle defaultUnselectedStyle() {
         return new HyUIStyle()
                 .withStyleReference("Common.ui", "SecondaryTextButtonStyle");
+    }
+
+    private void applyTabButtonText(UIElementBuilder<?> button, String text) {
+        if (button instanceof ButtonBuilder buttonBuilder) {
+            buttonBuilder.withText(text);
+        } else if (button instanceof CustomButtonBuilder customButton) {
+            customButton.withText(text);
+        }
+    }
+
+    private void applyTabButtonStyle(UIElementBuilder<?> button, boolean isSelected) {
+        if (button instanceof ButtonBuilder buttonBuilder) {
+            if (isSelected) {
+                buttonBuilder.withStyle(selectedTabStyle != null ? selectedTabStyle : defaultSelectedStyle());
+            } else {
+                buttonBuilder.withStyle(unselectedTabStyle != null ? unselectedTabStyle : defaultUnselectedStyle());
+            }
+        }
+    }
+
+    private void markTabsDirty() {
+        tabsVersion++;
+    }
+
+    private void clearTabButtons() {
+        if (tabButtons.isEmpty()) {
+            return;
+        }
+        children.removeAll(tabButtons);
+        tabButtons.clear();
     }
 }

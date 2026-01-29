@@ -25,7 +25,7 @@ public class MultiHudWrapper {
     private static Object getInstance() {
         Class<?> multipleHudClass = getMultipleHudClass();
         if (multipleHudClass == null) {
-            HyUIPlugin.getLog().logInfo("Could not find MultipleHUD plugin, using own implementation. THIS MAY BREAK OTHER MODS!");
+            HyUIPlugin.getLog().logFinest("Could not find MultipleHUD plugin, using own implementation. THIS MAY BREAK OTHER MODS!");
             useOwnMHUD = true;
             mhudClass = au.ellie.hyui.utils.multiplehud.MultipleHUD.class;
             mhudSemver = Semver.fromString("1.0.3");
@@ -37,14 +37,14 @@ public class MultiHudWrapper {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-        HyUIPlugin.getLog().logInfo("getInstance method found");
+        HyUIPlugin.getLog().logFinest("getInstance method found");
         Object multipleHudInstance = null;
         try {
             multipleHudInstance = getInstanceMethod.invoke(null);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-        HyUIPlugin.getLog().logInfo("MultipleHUD instance retrieved");
+        HyUIPlugin.getLog().logFinest("MultipleHUD instance retrieved");
         if (multipleHudInstance == null) {
             // TODO: load MHUD ourselves... We know there is absolutely no MHUD installed.
             //  For now, we just need to write our own small implementation.
@@ -56,7 +56,7 @@ public class MultiHudWrapper {
 
     @NullableDecl
     private static Class<?> getMultipleHudClass() {
-        HyUIPlugin.getLog().logInfo("Attempting to find MultipleHUD class");
+        HyUIPlugin.getLog().logFinest("Attempting to find MultipleHUD class");
         Class<?> multipleHudClass = null;
         try {
             multipleHudClass = Class.forName("com.buuz135.mhud.MultipleHUD");
@@ -64,12 +64,12 @@ public class MultiHudWrapper {
         }
         var existingPlugin = PluginManager.get().getPlugin(new PluginIdentifier("Buuz135", "MultipleHUD"));
         if (existingPlugin != null) {
-            HyUIPlugin.getLog().logInfo("MultipleHUD plugin found: " + existingPlugin.getManifest().getVersion().toString());
+            HyUIPlugin.getLog().logFinest("MultipleHUD plugin found: " + existingPlugin.getManifest().getVersion().toString());
             multipleHudClass = existingPlugin.getClass();
             mhudSemver = existingPlugin.getManifest().getVersion();
         }
         if (multipleHudClass != null) {
-            HyUIPlugin.getLog().logInfo("MultipleHUD class found");
+            HyUIPlugin.getLog().logFinest("MultipleHUD class found");
             mhudClass = multipleHudClass;
         }
         return multipleHudClass;
@@ -114,7 +114,7 @@ public class MultiHudWrapper {
             try {
                 Class<?> multipleHudClass = mhudClass;
                 if (mhudSemver == null || !mhudSemver.satisfies(SemverRange.fromString(">=1.0.3"))) {
-                    HyUIPlugin.getLog().logInfo("MultipleHUD version does not support hideCustomHud(Player, String) method");
+                    HyUIPlugin.getLog().logFinest("MultipleHUD version does not support hideCustomHud(Player, String) method");
                     return;
                 }
                 // Let's still for now with this declared deprecated method.

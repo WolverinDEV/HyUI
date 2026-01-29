@@ -8,13 +8,10 @@ import com.hypixel.hytale.protocol.packets.setup.AssetInitialize;
 import com.hypixel.hytale.protocol.packets.setup.AssetPart;
 import com.hypixel.hytale.protocol.packets.setup.RequestCommonAssetsRebuild;
 import com.hypixel.hytale.server.core.asset.common.CommonAsset;
-import com.hypixel.hytale.server.core.asset.common.CommonAssetModule;
 import com.hypixel.hytale.server.core.asset.common.CommonAssetRegistry;
 import com.hypixel.hytale.server.core.io.PacketHandler;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -90,7 +87,7 @@ public class DynamicImageAsset extends CommonAsset {
         this.data = data;
         this.slotIndex = slotIndex;
         this.playerUuid = normalizePlayerUuid(playerUuid);
-        HyUIPlugin.getLog().logInfo("Dynamic image slot allocated: " + slotIndex + " path=" + PATHS[slotIndex]);
+        HyUIPlugin.getLog().logFinest("Dynamic image slot allocated: " + slotIndex + " path=" + PATHS[slotIndex]);
     }
     
     public static CommonAsset empty() {
@@ -143,7 +140,7 @@ public class DynamicImageAsset extends CommonAsset {
             for (int i = usedSlots.length - 1; i >= 0; i--) {
                 if (!usedSlots[i]) {
                     usedSlots[i] = true;
-                    HyUIPlugin.getLog().logInfo("Claimed dynamic image slot: " + i);
+                    HyUIPlugin.getLog().logFinest("Claimed dynamic image slot: " + i);
                     return i;
                 }
             }
@@ -158,7 +155,7 @@ public class DynamicImageAsset extends CommonAsset {
                 return;
             }
             usedSlots[slotIndex] = false;
-            HyUIPlugin.getLog().logInfo("Released dynamic image slot: " + slotIndex);
+            HyUIPlugin.getLog().logFinest("Released dynamic image slot: " + slotIndex);
         }
     }
 

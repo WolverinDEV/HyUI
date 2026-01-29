@@ -310,19 +310,19 @@ public abstract class InterfaceBuilder<T extends InterfaceBuilder<T>> {
 
     static void sendDynamicImage(PlayerRef pRef, DynamicImageBuilder dynamicImage) {
         if (pRef == null || dynamicImage == null) {
-            HyUIPlugin.getLog().logInfo("REFERENCE WAS INVALID");
+            HyUIPlugin.getLog().logFinest("REFERENCE WAS INVALID");
             
             return;
         }
         UUID playerUuid = pRef.getUuid();
         String url = dynamicImage.getImageUrl();
         if (url == null || url.isBlank()) {
-            HyUIPlugin.getLog().logInfo("URL WAS BLANK OR NULL");
+            HyUIPlugin.getLog().logFinest("URL WAS BLANK OR NULL");
             
             return;
         }
         try {
-            HyUIPlugin.getLog().logInfo("Preparing dynamic image from URL: " + url);
+            HyUIPlugin.getLog().logFinest("Preparing dynamic image from URL: " + url);
             byte[] imageBytes;
             if (dynamicImage instanceof HyvatarImageBuilder hyvatar && !hyvatar.hasCustomImageUrl()) {
                 imageBytes = HyvatarUtils.downloadRenderPng(
@@ -342,14 +342,14 @@ public abstract class InterfaceBuilder<T extends InterfaceBuilder<T>> {
             dynamicImage.setSlotIndex(playerUuid, asset.getSlotIndex());
 
             DynamicImageAsset.sendToPlayer(pRef.getPacketHandler(), asset);
-            HyUIPlugin.getLog().logInfo("Dynamic image sent using path: " + asset.getPath());
+            HyUIPlugin.getLog().logFinest("Dynamic image sent using path: " + asset.getPath());
         } catch (IllegalStateException e) {
-            HyUIPlugin.getLog().logInfo("Failed to allocate dynamic image slot: " + e.getMessage());
+            HyUIPlugin.getLog().logFinest("Failed to allocate dynamic image slot: " + e.getMessage());
         } catch (IOException e) {
-            HyUIPlugin.getLog().logInfo("Failed to download dynamic image: " + e.getMessage());
+            HyUIPlugin.getLog().logFinest("Failed to download dynamic image: " + e.getMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            HyUIPlugin.getLog().logInfo("Dynamic image download interrupted: " + e.getMessage());
+            HyUIPlugin.getLog().logFinest("Dynamic image download interrupted: " + e.getMessage());
         }
     }
 

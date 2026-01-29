@@ -105,12 +105,12 @@ public class ColorPickerBuilder extends UIElementBuilder<ColorPickerBuilder> {
         if (selector == null) return;
 
         if (value != null) {
-            HyUIPlugin.getLog().logInfo("Setting Value: " + value + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Value: " + value + " for " + selector);
             commands.set(selector + ".Value", value);
         }
 
         if (hyUIStyle == null && style != null) {
-            HyUIPlugin.getLog().logInfo("Setting Style: " + style + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Style: " + style + " for " + selector);
             commands.set(selector + ".Style", style);
         }
         if (listeners.isEmpty()) {
@@ -120,7 +120,7 @@ public class ColorPickerBuilder extends UIElementBuilder<ColorPickerBuilder> {
         listeners.forEach(listener -> {
             if (listener.type() == CustomUIEventBindingType.ValueChanged) {
                 String eventId = getEffectiveId();
-                HyUIPlugin.getLog().logInfo("Adding ValueChanged event binding for " + selector + " with eventId: " + eventId);
+                HyUIPlugin.getLog().logFinest("Adding ValueChanged event binding for " + selector + " with eventId: " + eventId);
                 events.addEventBinding(CustomUIEventBindingType.ValueChanged, selector, 
                         EventData.of("@Value", selector + ".Value")
                             .append("Target", eventId)

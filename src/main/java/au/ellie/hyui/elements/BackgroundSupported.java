@@ -33,8 +33,8 @@ public interface BackgroundSupported<T extends BackgroundSupported<T>> {
     default void applyBackground(UICommandBuilder commands, String selector) {
         HyUIPatchStyle background = getBackground();
         if (background != null && selector != null) {
-            HyUIPlugin.getLog().logInfo("Setting Background for " + selector);
-            HyUIPlugin.getLog().logInfo("Setting Background for " + background.getTexturePath());
+            HyUIPlugin.getLog().logFinest("Setting Background for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Background for " + background.getTexturePath());
             
             commands.setObject(selector + ".Background", background.getHytalePatchStyle());
         }

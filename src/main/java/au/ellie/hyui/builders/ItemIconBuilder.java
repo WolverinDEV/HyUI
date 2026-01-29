@@ -48,7 +48,7 @@ public class ItemIconBuilder extends UIElementBuilder<ItemIconBuilder> {
         if (selector == null) return;
 
         if (itemId != null) {
-            HyUIPlugin.getLog().logInfo("Setting ItemId on " + selector + " to " + itemId);
+            HyUIPlugin.getLog().logFinest("Setting ItemId on " + selector + " to " + itemId);
             commands.set(selector + ".ItemId", itemId);
         }
     }

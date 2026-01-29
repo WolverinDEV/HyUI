@@ -58,7 +58,7 @@ public interface LayoutModeSupported<T extends LayoutModeSupported<T>> {
     default void applyLayoutMode(UICommandBuilder commands, String selector) {
         String mode = getLayoutMode();
         if (mode != null && selector != null) {
-            HyUIPlugin.getLog().logInfo("Setting LayoutMode: " + mode + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting LayoutMode: " + mode + " for " + selector);
             commands.set(selector + ".LayoutMode", mode);
         }
     }

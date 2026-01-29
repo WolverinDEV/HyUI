@@ -144,10 +144,10 @@ public class SliderBuilder extends UIElementBuilder<SliderBuilder> {
         }
 
         if (hyUIStyle == null && style != null) {
-            HyUIPlugin.getLog().logInfo("Setting Style for Slider " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Style for Slider " + selector);
             commands.set(selector + ".Style", style);
         } else {
-            HyUIPlugin.getLog().logInfo("Setting Style for Slider to DefaultSliderStyle " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Style for Slider to DefaultSliderStyle " + selector);
             commands.set(selector + ".Style", Value.ref("Common.ui", "DefaultSliderStyle"));
         }
         if (listeners.isEmpty()) {
@@ -157,7 +157,7 @@ public class SliderBuilder extends UIElementBuilder<SliderBuilder> {
         listeners.forEach(listener -> {
             if (listener.type() == CustomUIEventBindingType.ValueChanged) {
                 String eventId = getEffectiveId();
-                HyUIPlugin.getLog().logInfo("Adding ValueChanged event binding for " + selector + " with eventId: " + eventId);
+                HyUIPlugin.getLog().logFinest("Adding ValueChanged event binding for " + selector + " with eventId: " + eventId);
                 events.addEventBinding(CustomUIEventBindingType.ValueChanged, selector,
                         EventData.of("@ValueInt", selector + ".Value")
                             .append("Target", eventId)

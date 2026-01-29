@@ -1,7 +1,6 @@
 package au.ellie.hyui.builders;
 
 import au.ellie.hyui.HyUIPlugin;
-import au.ellie.hyui.elements.BackgroundSupported;
 import au.ellie.hyui.elements.LayoutModeSupported;
 import au.ellie.hyui.elements.UIElements;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
@@ -67,7 +66,7 @@ public class ImageBuilder extends UIElementBuilder<ImageBuilder> implements Layo
         applyLayoutMode(commands, wrappingGroupSelector);
 
         if (imagePath != null) {
-            HyUIPlugin.getLog().logInfo("Setting AssetPath on " + selector + " to " + imagePath);
+            HyUIPlugin.getLog().logFinest("Setting AssetPath on " + selector + " to " + imagePath);
             commands.set(selector + ".AssetPath", "UI/Custom/" + imagePath);
         }
     }

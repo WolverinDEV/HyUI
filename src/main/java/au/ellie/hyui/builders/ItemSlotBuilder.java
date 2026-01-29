@@ -2,8 +2,6 @@ package au.ellie.hyui.builders;
 
 import au.ellie.hyui.HyUIPlugin;
 import au.ellie.hyui.elements.UIElements;
-import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
-import com.hypixel.hytale.server.core.ui.builder.EventData;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 
@@ -74,15 +72,15 @@ public class ItemSlotBuilder extends UIElementBuilder<ItemSlotBuilder> {
         if (selector == null) return;
 
         if (showQualityBackground != null) {
-            HyUIPlugin.getLog().logInfo("Setting ShowQualityBackground: " + showQualityBackground + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting ShowQualityBackground: " + showQualityBackground + " for " + selector);
             commands.set(selector + ".ShowQualityBackground", showQualityBackground);
         }
         if (showQuantity != null) {
-            HyUIPlugin.getLog().logInfo("Setting ShowQuantity: " + showQuantity + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting ShowQuantity: " + showQuantity + " for " + selector);
             commands.set(selector + ".ShowQuantity", showQuantity);
         }
         if (itemId != null) {
-            HyUIPlugin.getLog().logInfo("Setting ItemId on " + selector + " to " + itemId);
+            HyUIPlugin.getLog().logFinest("Setting ItemId on " + selector + " to " + itemId);
             commands.set(selector + ".ItemId", itemId);
         }
 

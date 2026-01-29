@@ -15,7 +15,7 @@ public class HyUIRemHudCommand extends AbstractAsyncCommand {
 
     public HyUIRemHudCommand() {
         super("rem", "Removes the last added HTML HUD");
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
         this.setPermissionGroup(GameMode.Adventure);
@@ -24,7 +24,7 @@ public class HyUIRemHudCommand extends AbstractAsyncCommand {
     @NonNullDecl
     @Override
     protected CompletableFuture<Void> executeAsync(CommandContext commandContext) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return CompletableFuture.completedFuture(null);
         }
         if (commandContext.sender() instanceof Player) {

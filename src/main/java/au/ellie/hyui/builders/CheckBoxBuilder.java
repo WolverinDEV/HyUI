@@ -123,7 +123,7 @@ public class CheckBoxBuilder extends UIElementBuilder<CheckBoxBuilder> {
 
         if (value != null) {
             // For CheckBoxWithLabel, the actual CheckBox is a child
-            HyUIPlugin.getLog().logInfo("Setting Value: " + value + " for " + selector + " #CheckBox");
+            HyUIPlugin.getLog().logFinest("Setting Value: " + value + " for " + selector + " #CheckBox");
             commands.set(selector + " #CheckBox.Value", value);
         }
 
@@ -133,7 +133,7 @@ public class CheckBoxBuilder extends UIElementBuilder<CheckBoxBuilder> {
         }*/
 
         if (hyUIStyle == null && style != null) {
-            HyUIPlugin.getLog().logInfo("Setting Style: " + style + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Style: " + style + " for " + selector);
             commands.set(selector + ".Style", style);
         }
         if (listeners.isEmpty()) {
@@ -143,7 +143,7 @@ public class CheckBoxBuilder extends UIElementBuilder<CheckBoxBuilder> {
         listeners.forEach(listener -> {
             if (listener.type() == CustomUIEventBindingType.ValueChanged) {
                 String eventId = getEffectiveId();
-                HyUIPlugin.getLog().logInfo("Adding ValueChanged event binding for " + selector + " #CheckBox with eventId: " + eventId);
+                HyUIPlugin.getLog().logFinest("Adding ValueChanged event binding for " + selector + " #CheckBox with eventId: " + eventId);
                 events.addEventBinding(CustomUIEventBindingType.ValueChanged, selector + " #CheckBox", 
                         EventData.of("@ValueBool", selector + " #CheckBox.Value")
                             .append("Target", eventId)

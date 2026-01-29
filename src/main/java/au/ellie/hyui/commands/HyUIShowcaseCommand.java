@@ -28,7 +28,7 @@ public class HyUIShowcaseCommand extends AbstractAsyncCommand {
 
     public HyUIShowcaseCommand() {
         super("showcase", "Opens the HyUI 0.5.0 feature showcase");
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
         this.setPermissionGroup(GameMode.Adventure);
@@ -37,7 +37,7 @@ public class HyUIShowcaseCommand extends AbstractAsyncCommand {
     @NonNullDecl
     @Override
     protected CompletableFuture<Void> executeAsync(CommandContext commandContext) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return CompletableFuture.completedFuture(null);
         }
         var sender = commandContext.sender();
@@ -58,7 +58,7 @@ public class HyUIShowcaseCommand extends AbstractAsyncCommand {
     }
 
     private void openShowcase(Player player, PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
 
@@ -96,7 +96,7 @@ public class HyUIShowcaseCommand extends AbstractAsyncCommand {
     }
 
     private TemplateProcessor createTemplateProcessor(PlayerRef playerRef) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return null;
         }
         List<ShowcaseItem> items = List.of(
@@ -160,7 +160,7 @@ public class HyUIShowcaseCommand extends AbstractAsyncCommand {
     }
 
     private String createShowcaseHtml() {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return "";
         }
         return """
@@ -406,28 +406,28 @@ public class HyUIShowcaseCommand extends AbstractAsyncCommand {
         }
 
         public String getName() {
-            if (!HyUIPluginLogger.LOGGING_ENABLED) {
+            if (!HyUIPluginLogger.IS_DEV) {
                 return null;
             }
             return name;
         }
 
         public int getPower() {
-            if (!HyUIPluginLogger.LOGGING_ENABLED) {
+            if (!HyUIPluginLogger.IS_DEV) {
                 return 0;
             }
             return power;
         }
 
         public String getRarity() {
-            if (!HyUIPluginLogger.LOGGING_ENABLED) {
+            if (!HyUIPluginLogger.IS_DEV) {
                 return null;
             }
             return rarity;
         }
 
         public ShowcaseMeta getMeta() {
-            if (!HyUIPluginLogger.LOGGING_ENABLED) {
+            if (!HyUIPluginLogger.IS_DEV) {
                 return null;
             }
             return meta;
@@ -444,14 +444,14 @@ public class HyUIShowcaseCommand extends AbstractAsyncCommand {
         }
 
         public String getTier() {
-            if (!HyUIPluginLogger.LOGGING_ENABLED) {
+            if (!HyUIPluginLogger.IS_DEV) {
                 return null;
             }
             return tier;
         }
 
         public String getSource() {
-            if (!HyUIPluginLogger.LOGGING_ENABLED) {
+            if (!HyUIPluginLogger.IS_DEV) {
                 return null;
             }
             return source;

@@ -2,7 +2,6 @@ package au.ellie.hyui.builders;
 
 import au.ellie.hyui.HyUIPlugin;
 import au.ellie.hyui.events.UIContext;
-import au.ellie.hyui.events.UIEventActions;
 import au.ellie.hyui.elements.BackgroundSupported;
 import au.ellie.hyui.elements.ScrollbarStyleSupported;
 import au.ellie.hyui.elements.UIElements;
@@ -316,7 +315,7 @@ public class TextFieldBuilder extends UIElementBuilder<TextFieldBuilder>
         if (selector == null) return;
 
         if (value != null) {
-            HyUIPlugin.getLog().logInfo("Setting Value: " + value + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Value: " + value + " for " + selector);
             commands.set(selector + ".Value", value);
         }
 
@@ -364,7 +363,7 @@ public class TextFieldBuilder extends UIElementBuilder<TextFieldBuilder>
         }
 
         if (hyUIStyle == null && style != null) {
-            HyUIPlugin.getLog().logInfo("Setting Style: " + style + " for " + selector);
+            HyUIPlugin.getLog().logFinest("Setting Style: " + style + " for " + selector);
             commands.set(selector + ".Style", style);
         }
         if (listeners.isEmpty()) {
@@ -383,7 +382,7 @@ public class TextFieldBuilder extends UIElementBuilder<TextFieldBuilder>
                     listener.type() == CustomUIEventBindingType.Validating ||
                     listener.type() == CustomUIEventBindingType.FocusGained) {
                 String eventId = getEffectiveId();
-                HyUIPlugin.getLog().logInfo("Adding " + listener.type() + " event binding for " + selector + " with eventId: " + eventId);
+                HyUIPlugin.getLog().logFinest("Adding " + listener.type() + " event binding for " + selector + " with eventId: " + eventId);
                 events.addEventBinding(listener.type(), selector,
                         EventData.of("@Value", selector + ".Value")
                                 .append("Target", eventId)

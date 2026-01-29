@@ -36,7 +36,7 @@ public class HyUIBountyCommand extends AbstractAsyncCommand {
 
     public HyUIBountyCommand() {
         super("bounty", "Opens the HyUI Bounty Board tutorial page");
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
         this.setPermissionGroup(GameMode.Adventure);
@@ -45,7 +45,7 @@ public class HyUIBountyCommand extends AbstractAsyncCommand {
     @NonNullDecl
     @Override
     protected CompletableFuture<Void> executeAsync(CommandContext commandContext) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return CompletableFuture.completedFuture(null);
         }
         var sender = commandContext.sender();
@@ -66,7 +66,7 @@ public class HyUIBountyCommand extends AbstractAsyncCommand {
     }
 
     private void openBountyBoard(PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
 
@@ -176,7 +176,7 @@ public class HyUIBountyCommand extends AbstractAsyncCommand {
     }
 
     private void openBountyBoardWithTemplateProcessor(PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
 
@@ -211,7 +211,7 @@ public class HyUIBountyCommand extends AbstractAsyncCommand {
     }
 
     private void openBountyBoardFromTemplateFile(PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
 
@@ -230,7 +230,7 @@ public class HyUIBountyCommand extends AbstractAsyncCommand {
     }
 
     private void openBountyBoardWithRuntimeTemplateUpdates(PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
 

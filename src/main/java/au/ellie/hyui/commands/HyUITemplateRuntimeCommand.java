@@ -24,7 +24,7 @@ public class HyUITemplateRuntimeCommand extends AbstractAsyncCommand {
 
     public HyUITemplateRuntimeCommand() {
         super("tr", "Shows live template values based on element IDs");
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
         this.setPermissionGroup(GameMode.Adventure);
@@ -33,7 +33,7 @@ public class HyUITemplateRuntimeCommand extends AbstractAsyncCommand {
     @NonNullDecl
     @Override
     protected CompletableFuture<Void> executeAsync(CommandContext commandContext) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return CompletableFuture.completedFuture(null);
         }
         var sender = commandContext.sender();
@@ -54,7 +54,7 @@ public class HyUITemplateRuntimeCommand extends AbstractAsyncCommand {
     }
 
     private void openTemplateRuntimeDemo(PlayerRef playerRef, Store<EntityStore> store) {
-        if (!HyUIPluginLogger.LOGGING_ENABLED) {
+        if (!HyUIPluginLogger.IS_DEV) {
             return;
         }
 
@@ -136,11 +136,11 @@ public class HyUITemplateRuntimeCommand extends AbstractAsyncCommand {
                 .withLifetime(CustomPageLifetime.CanDismiss);
 
         builder.addEventListener("other", CustomUIEventBindingType.ValueChanged, (value, ctx) -> {
-            HyUIPlugin.getLog().logInfo("REBUILD: template runtime update (other)");
+            HyUIPlugin.getLog().logFinest("REBUILD: template runtime update (other)");
             ctx.updatePage(false);
         });
         builder.addEventListener("displayName", CustomUIEventBindingType.FocusLost, (_, ctx) -> {
-            HyUIPlugin.getLog().logInfo("REBUILD: template runtime update (displayName)");
+            HyUIPlugin.getLog().logFinest("REBUILD: template runtime update (displayName)");
             ctx.getValue("displayName", String.class).ifPresent(name -> {
                 ctx.getByIdAs("profile-hyvatar", HyvatarImageBuilder.class)
                         .ifPresent(image -> {
@@ -152,19 +152,19 @@ public class HyUITemplateRuntimeCommand extends AbstractAsyncCommand {
             });
         });
         builder.addEventListener("level", CustomUIEventBindingType.ValueChanged, (value, ctx) -> {
-            HyUIPlugin.getLog().logInfo("REBUILD: template runtime update (level)");
+            HyUIPlugin.getLog().logFinest("REBUILD: template runtime update (level)");
             ctx.updatePage(false);
         });
         builder.addEventListener("volume", CustomUIEventBindingType.ValueChanged, (value, ctx) -> {
-            HyUIPlugin.getLog().logInfo("REBUILD: template runtime update (volume)");
+            HyUIPlugin.getLog().logFinest("REBUILD: template runtime update (volume)");
             ctx.updatePage(false);
         });
         builder.addEventListener("favColor", CustomUIEventBindingType.ValueChanged, (value, ctx) -> {
-            HyUIPlugin.getLog().logInfo("REBUILD: template runtime update (favColor)");
+            HyUIPlugin.getLog().logFinest("REBUILD: template runtime update (favColor)");
             ctx.updatePage(false);
         });
         builder.addEventListener("termsAccepted", CustomUIEventBindingType.ValueChanged, (value, ctx) -> {
-            HyUIPlugin.getLog().logInfo("REBUILD: template runtime update (termsAccepted)");
+            HyUIPlugin.getLog().logFinest("REBUILD: template runtime update (termsAccepted)");
             ctx.updatePage(false);
         });
 

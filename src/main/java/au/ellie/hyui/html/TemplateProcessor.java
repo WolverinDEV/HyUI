@@ -222,7 +222,7 @@ public class TemplateProcessor {
                 }
             }
 
-            HyUIPlugin.getLog().logInfo("Template variable: $" + varName + " = " + value);
+            HyUIPlugin.getLog().logFinest("Template variable: $" + varName + " = " + value);
             matcher.appendReplacement(result, Matcher.quoteReplacement(value));
         }
         matcher.appendTail(result);
@@ -370,7 +370,7 @@ public class TemplateProcessor {
 
             String componentHtml = components.get(componentName);
             if (componentHtml == null) {
-                HyUIPlugin.getLog().logInfo("Unknown component: @" + componentName);
+                HyUIPlugin.getLog().logFinest("Unknown component: @" + componentName);
                 result.append("<!-- Unknown component: ").append(componentName).append(" -->");
                 index = cursor + 2;
                 continue;
@@ -381,13 +381,13 @@ public class TemplateProcessor {
                 for (Map.Entry<String, String> param : params.entrySet()) {
                     String rawValue = param.getValue();
                     String value = processVariables(rawValue, scope);
-                    HyUIPlugin.getLog().logInfo("Component param @" + componentName + " " + param.getKey()
+                    HyUIPlugin.getLog().logFinest("Component param @" + componentName + " " + param.getKey()
                             + " raw=" + rawValue + " -> " + value + " scope=" + scope.keySet());
                     componentHtml = componentHtml.replace("{{$" + param.getKey() + "}}", value);
                 }
             }
 
-            HyUIPlugin.getLog().logInfo("Including component: @" + componentName);
+            HyUIPlugin.getLog().logFinest("Including component: @" + componentName);
             result.append(componentHtml);
             index = cursor + 2;
         }

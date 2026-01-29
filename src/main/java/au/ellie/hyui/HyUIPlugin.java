@@ -1,7 +1,5 @@
 package au.ellie.hyui;
 
-import au.ellie.hyui.builders.HudBuilder;
-import au.ellie.hyui.builders.LabelBuilder;
 import au.ellie.hyui.commands.*;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -18,6 +16,8 @@ public class HyUIPlugin extends JavaPlugin {
 
     private static HyUIPluginLogger instance;
     
+    private static final boolean ADD_CMDS = false;
+    
     public static HyUIPluginLogger getLog() {
         if (instance == null)
             instance = new HyUIPluginLogger();
@@ -32,8 +32,8 @@ public class HyUIPlugin extends JavaPlugin {
 
     @Override
     protected void setup() {
-        if (HyUIPluginLogger.LOGGING_ENABLED) {
-            instance.logInfo("Setting up plugin " + this.getName());
+        if (ADD_CMDS) {
+            instance.logFinest("Setting up plugin " + this.getName());
             this.getCommandRegistry().registerCommand(new HyUITestGuiCommand());
             this.getCommandRegistry().registerCommand(new HyUIAddHudCommand());
             this.getCommandRegistry().registerCommand(new HyUIRemHudCommand());
@@ -41,9 +41,10 @@ public class HyUIPlugin extends JavaPlugin {
             this.getCommandRegistry().registerCommand(new HyUIShowcaseCommand());
             this.getCommandRegistry().registerCommand(new HyUITemplateRuntimeCommand());
             this.getCommandRegistry().registerCommand(new HyUIBountyCommand());
+            this.getCommandRegistry().registerCommand(new HyUITabsCommand());
             
             this.getEventRegistry().registerGlobal(PlayerReadyEvent.class, event -> {
-                instance.logInfo("Player ready event triggered for " + event.getPlayer().getDisplayName());
+                instance.logFinest("Player ready event triggered for " + event.getPlayer().getDisplayName());
                 
                 var player = event.getPlayer();
                 if (player == null) return;

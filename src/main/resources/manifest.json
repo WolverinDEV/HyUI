@@ -1,11 +1,13 @@
 {
     "Group": "Ellie",
     "Name": "HyUI",
-    "Version": "0.5.7",
+    "Version": "0.5.8",
     "Description": "A library for mods that helps build GUIs faster and better.",
     "Authors": [
         {
-            "Name": "EllieAU"
+            "Name": "Ellie",
+            "Email": "ellie@ellie.au",
+            "Website": "https://ellie.au"
         }
     ],
     "Website": "ellie.au",
@@ -18,5 +20,8 @@
     },
     "DisabledByDefault": false,
     "Main": "au.ellie.hyui.HyUIPlugin",
-    "IncludesAssetPack": true
+    "IncludesAssetPack": true,
+    "LoadBefore": {
+        
+    }
 }

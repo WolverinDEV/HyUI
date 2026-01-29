@@ -140,7 +140,7 @@ public class ContainerBuilder extends UIElementBuilder<ContainerBuilder> impleme
 
         if (titleText != null) {
             String titleSelector = selector + " #Title #HyUIContainerTitle";
-            HyUIPlugin.getLog().logInfo("Setting Title Text: " + titleText + " for " + titleSelector);
+            HyUIPlugin.getLog().logFinest("Setting Title Text: " + titleText + " for " + titleSelector);
             commands.set(titleSelector + ".Text", titleText);
         }
     }
@@ -150,7 +150,7 @@ public class ContainerBuilder extends UIElementBuilder<ContainerBuilder> impleme
         String selector = getSelector();
         if (selector != null) {
             for (UIElementBuilder<?> child : children) {
-                HyUIPlugin.getLog().logInfo("Building child element with parent selector: " + child.parentSelector);
+                HyUIPlugin.getLog().logFinest("Building child element with parent selector: " + child.parentSelector);
                 // We want to make sure children can be placed in #Title or #Content.
                 // UIElementBuilder.inside() sets parentSelector.
                 String childParent = child.parentSelector;

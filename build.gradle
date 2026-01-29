@@ -4,17 +4,7 @@ plugins {
     id 'java'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.3'
     id("com.gradleup.shadow") version "9.3.1"
-}
-
-ext {
-    def userHome = System.getProperty("user.home")
-    def os = System.getProperty("os.name").toLowerCase()
-    if (os.contains("win")) {
-        hytaleHome = "${userHome}/AppData/Roaming/Hytale"
-    } else {
-        // Assume we are on Linux, we love Linux flatpaks here.
-        hytaleHome = "${userHome}/.var/app/com.hypixel.HytaleLauncher/data/Hytale"
-    }
+    id("app.ultradev.hytalegradle") version "2.0.2"
 }
 
 java {
@@ -28,63 +18,34 @@ javadoc {
     options.addStringOption('Xdoclint:-missing', '-quiet')
 }
 
+
+hytale {
+    // Add `--allow-op` to server args (allows you to run `/op self` in-game)
+    allowOp.set(true)
+
+    // Set the patchline to use, currently there are "release" and "pre-release"
+    patchline.set("pre-release")
+
+    // Load mods from the local Hytale installation
+    includeLocalMods.set(true)
+    
+    disableSentry.set(true)
+    
+    // Replace the version in the manifest with the project version
+    manifest {
+        version.set(project.version.toString())
+        author(author_name, "ellie@ellie.au", "https://ellie.au")
+        optionalDependencies.put("Buuz135:MultipleHUD", "*");
+        
+    }
+}
+
 // Adds the Hytale server as a build dependency, allowing you to reference and
 // compile against their code. This requires you to have Hytale installed using
 // the official launcher for now.
 dependencies {
-    compileOnly(files("$hytaleHome/install/$patchline/package/game/latest/Server/HytaleServer.jar"))
-    runtimeOnly(files("$hytaleHome/install/$patchline/package/game/latest/Server/HytaleServer.jar"))
     shadow 'org.jsoup:jsoup:1.22.1'
     implementation 'org.jsoup:jsoup:1.22.1'
-}
-
-// Create the working directory to run the server if it does not already exist.
-def serverRunDir = file("$projectDir/run")
-if (!serverRunDir.exists()) {
-    serverRunDir.mkdirs()
-}
-
-// Updates the manifest.json file with the latest properties defined in the
-// build.properties file. Currently we update the version and if packs are
-// included with the plugin.
-tasks.register('updatePluginManifest') {
-    def manifestFile = file('src/main/resources/manifest.json')
-    doLast {
-        if (!manifestFile.exists()) {
-            throw new GradleException("Could not find manifest.json at ${manifestFile.path}!")
-        }
-        def manifestJson = new groovy.json.JsonSlurper().parseText(manifestFile.text)
-        manifestJson.Version = version
-        manifestJson.IncludesAssetPack = includes_pack.toBoolean()
-        manifestJson.Website = website
-        manifestJson.Group = author
-        manifestJson.Name = project.rootProject.name
-        manifestJson.Main = "au.ellie.${project.rootProject.name.toLowerCase()}.${project.rootProject.name}Plugin"
-
-        manifestFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(manifestJson))
-    }
-}
-
-// Makes sure the plugin manifest is up to date.
-tasks.named('processResources') {
-    dependsOn 'updatePluginManifest'
-}
-
-// Creates a run configuration in IDEA that will run the Hytale server with
-// your plugin and the default assets.
-idea.project.settings.runConfigurations {
-    'HytaleServer'(org.jetbrains.gradle.ext.Application) {
-        mainClass = 'com.hypixel.hytale.Main'
-        moduleName = project.idea.module.name + '.main'
-        programParameters = "--allow-op --assets=$hytaleHome/install/$patchline/package/game/latest/Assets.zip"
-        if (includes_pack.toBoolean()) {
-            programParameters += " --mods=${sourceSets.main.java.srcDirs.first().parentFile.absolutePath}"
-        }
-        if (load_user_mods.toBoolean()) {
-            programParameters += " --mods=$hytaleHome/UserData/Mods"
-        }
-        workingDirectory = serverRunDir.absolutePath
-    }
 }
 
 repositories {
@@ -93,14 +54,33 @@ repositories {
 
 shadowJar {
     archiveBaseName.set(project.name)
-    archiveClassifier.set('all')
+    archiveClassifier.set('debug')
 
     configurations = [project.configurations.shadow]
 }
 
-tasks.named('shadowJar', ShadowJar) {
-    // Exclude some stuff we really don't need.
-    exclude 'Common/UI/Custom/Pages/*.html'
-    exclude 'Common/UI/Custom/*.png'
-    exclude 'au/ellie/hyui/commands/**'
+tasks.runServer {
+    jvmArgs = jvmArgs + "-XX:+AllowEnhancedClassRedefinition"
+    environment("HYUI_DEV", "true")
+}
+
+tasks.register('releaseJar', Jar) {
+    group = 'build'
+    description = 'uhhm, somethimg'
+
+    dependsOn tasks.shadowJar
+
+    def shadowJarTask = tasks.shadowJar as Jar
+
+    archiveClassifier = 'all'
+
+    from(zipTree(shadowJarTask.archiveFile)) {
+        exclude(
+                'Common/UI/Custom/Pages/*.html',
+                'Common/UI/Custom/*.png',
+                'au/ellie/hyui/commands/**',
+        )
+    }
+
+    destinationDirectory = layout.buildDirectory.dir('libs')
 }

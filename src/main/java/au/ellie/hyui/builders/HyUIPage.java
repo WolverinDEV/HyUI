@@ -3,14 +3,11 @@ package au.ellie.hyui.builders;
 import au.ellie.hyui.HyUIPlugin;
 import au.ellie.hyui.events.DynamicPageData;
 import au.ellie.hyui.events.UIContext;
-import au.ellie.hyui.events.UIEventActions;
-import au.ellie.hyui.events.UIEventListener;
 import au.ellie.hyui.html.TemplateProcessor;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPage;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
-import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
@@ -53,7 +50,7 @@ public class HyUIPage extends InteractiveCustomUIPage<DynamicPageData> implement
     
     public void close() {
         super.close();
-        HyUIPlugin.getLog().logInfo("Page closed!");
+        HyUIPlugin.getLog().logFinest("Page closed!");
         delegate.releaseDynamicImages(playerRef.getUuid());
     }
     
@@ -101,7 +98,7 @@ public class HyUIPage extends InteractiveCustomUIPage<DynamicPageData> implement
 
     @Override
     public void onDismiss(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store) {
-        HyUIPlugin.getLog().logInfo("Page dismissed!");
+        HyUIPlugin.getLog().logFinest("Page dismissed!");
         delegate.releaseDynamicImages(playerRef.getUuid());
     }
     
